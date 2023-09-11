@@ -1,0 +1,5 @@
+-- GUID: a7f397
+-- The "table" is actually a custom tile
+function onLoad()
+    self.interactable = false
+end

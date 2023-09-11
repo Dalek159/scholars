@@ -1,0 +1,67 @@
+-- Purpose: Host the functionality for Quick Returns
+-- This functionality will be tied to the 0 on the numpad
+-- which TTS interprets as 10
+
+function onLoad()
+    supported_things = {
+        ['White Die'] = Global.getVar('WhiteDiceBag'),
+        ['Silver'] = Global.getVar('SilverBag'),
+        ['Gold'] = Global.getVar('GoldBag'),
+        ['Red Worker'] = Global.getVar('RedWorkerBag'),
+        ['Yellow Worker'] = Global.getVar('YellowWorkerBag'),
+        ['Blue Worker'] = Global.getVar('BlueWorkerBag'),
+        ['White Worker'] = Global.getVar('WhiteWorkerBag'),
+    }
+end
+
+function announcement(player_color, obj_name)
+    if obj_name == 'White Die' then
+        action_text = ' destroyed a '
+    else
+        action_text = ' spent a '
+    end
+    broadcastToAll(
+        player_color .. action_text .. obj_name,
+        player_color
+    )
+end
+
+function onScriptingButtonDown(key_num, player_color)
+    if key_num == 10 then
+        local obj = Player[player_color].getHoverObject()
+        if obj == nil then return end
+
+        local obj_name = obj.getName()
+
+        --[[
+            Noticed sometimes the item would bounce off the
+            bag if returned from certain angles, so we'll
+            add an offset in the y-axis so the item cleanly
+            drops into the bag/deck
+        ]]
+        local offset = Vector(0, 2, 0)
+
+        -- Unnamed Objects
+        if (obj_name == nil) or (obj_name == '') then
+            Player[player_color].broadcast(
+                'Game component is unnamed, and thus cannot '
+                .. 'be returned to an appropriate bag.'
+            )
+            return
+        -- Named but not supported Objects
+        elseif not supported_things[obj_name] then
+            Player[player_color].broadcast(
+                obj_name .. ' is not supported for quick returns.'
+            )
+        -- Supported Objects
+    else
+            obj.setPosition(supported_things[obj_name].getPosition() + offset)
+            announcement(player_color, obj_name)
+        end
+    else
+        Player[player_color].broadcast(
+            'Please use the 0 key on the numpad to return '
+            .. 'items to their bags.'
+        )
+    end
+end
