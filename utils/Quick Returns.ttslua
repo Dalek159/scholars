@@ -11,12 +11,18 @@ function onLoad()
         ['Yellow Worker'] = Global.getVar('YellowWorkerBag'),
         ['Blue Worker'] = Global.getVar('BlueWorkerBag'),
         ['White Worker'] = Global.getVar('WhiteWorkerBag'),
+        ['Purple Influence'] = Global.getVar('PurpleInfluenceBag'),
+        ['Red Influence'] = Global.getVar('RedInfluenceBag'),
+        ['Teal Influence'] = Global.getVar('TealInfluenceBag'),
+        ['Yellow Influence'] = Global.getVar('YellowInfluenceBag'),
     }
 end
 
 function announcement(player_color, obj_name)
     if obj_name == 'White Die' then
         action_text = ' destroyed a '
+    elseif string.find(obj_name, 'Influence')   then
+        action_text = ' returned a '
     else
         action_text = ' spent a '
     end
