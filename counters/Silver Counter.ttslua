@@ -16,10 +16,15 @@ MAXIMUM_VALUE = 9999
 -- Set to false to disable
 ALLOW_SET_FROM_DESCRIPTION = true
 
--- Button colors (RGB values from 0.0 to 1.0)
--- For a RGB color that has values 0-255, simply divide by 255
-BUTTON_BACKGROUND_COLOR = {0.251, 0.251, 0.251} -- soft black
-BUTTON_FONT_COLOR = {1.0, 1.0, 1.0} -- white
+-- Button colors
+-- RGB values are normally expressed as (r, g, b) where r, g, and b are
+-- between 0 and 255. TTS expects this on a scale of 0.0 to 1.0, so simply
+-- divide by 255.
+-- Alternatively, use the Color class, which contains these tables for any
+-- Player Color or added color.
+-- e.g. The soft black (64, 64, 64) would be expressed as {0.251, 0.251, 0.251}
+BUTTON_BACKGROUND_COLOR = Color.Black
+BUTTON_FONT_COLOR = Color.White
 
 -- Value button parameters (this is what shows the current count)
 VALUE_BUTTON_HEIGHT = 800
