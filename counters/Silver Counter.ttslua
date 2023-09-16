@@ -27,8 +27,8 @@ BUTTON_BACKGROUND_COLOR = Color.Black
 BUTTON_FONT_COLOR = Color.White
 
 -- Value button parameters (this is what shows the current count)
-VALUE_BUTTON_HEIGHT = 800
-VALUE_BUTTON_WIDTH = 800
+VALUE_BUTTON_HEIGHT = 900
+VALUE_BUTTON_WIDTH = 900
 VALUE_BUTTON_HORIZONTAL_POSITION = 0  -- Negative for left, positive for right
 VALUE_BUTTON_VERTICAL_POSITION = 0    -- Negative for up, positive for down
 ONE_DIGIT_FONT_SIZE = 600
@@ -38,9 +38,9 @@ FOUR_DIGIT_FONT_SIZE = 300
 
 -- Small add button parameters
 -- (button to add SMALL_ADD_VALUE to the count)
-SMALL_ADD_BUTTON_HEIGHT = 600
-SMALL_ADD_BUTTON_WIDTH = 600
-SMALL_ADD_BUTTON_HORIZONTAL_POSITION = 2.5  -- Negative for left, positive for right
+SMALL_ADD_BUTTON_HEIGHT = 700
+SMALL_ADD_BUTTON_WIDTH = 700
+SMALL_ADD_BUTTON_HORIZONTAL_POSITION = 2.7  -- Negative for left, positive for right
 SMALL_ADD_BUTTON_VERTICAL_POSITION = 1.0    -- Negative for up, positive for down
 SMALL_ADD_BUTTON_FONT_SIZE = 400
 SMALL_ADD_BUTTON_LABEL = '+1'
@@ -48,9 +48,9 @@ SMALL_ADD_VALUE = 1
 
 -- Small subtract button parameters
 -- (button to subtract SMALL_SUBTRACT_VALUE from the count)
-SMALL_SUBTRACT_BUTTON_HEIGHT = 600
-SMALL_SUBTRACT_BUTTON_WIDTH = 600
-SMALL_SUBTRACT_BUTTON_HORIZONTAL_POSITION = -2.5   -- Negative for left, positive for right
+SMALL_SUBTRACT_BUTTON_HEIGHT = 700
+SMALL_SUBTRACT_BUTTON_WIDTH = 700
+SMALL_SUBTRACT_BUTTON_HORIZONTAL_POSITION = -2.7   -- Negative for left, positive for right
 SMALL_SUBTRACT_BUTTON_VERTICAL_POSITION = 1.0      -- Negative for up, positive for down
 SMALL_SUBTRACT_BUTTON_FONT_SIZE = 400
 SMALL_SUBTRACT_BUTTON_LABEL = '-1'
@@ -59,9 +59,9 @@ SMALL_SUBTRACT_VALUE = 1 -- use absolute value
 -- Big add button parameters
 -- (button to add BIG_ADD_VALUE to the count)
 SHOW_BIG_ADD_BUTTON = true   -- Set to false for no button
-BIG_ADD_BUTTON_HEIGHT = 600
-BIG_ADD_BUTTON_WIDTH = 600
-BIG_ADD_BUTTON_HORIZONTAL_POSITION = 2.5   -- Negative for left, positive for right
+BIG_ADD_BUTTON_HEIGHT = 700
+BIG_ADD_BUTTON_WIDTH = 700
+BIG_ADD_BUTTON_HORIZONTAL_POSITION = 2.7   -- Negative for left, positive for right
 BIG_ADD_BUTTON_VERTICAL_POSITION = -1.0    -- Negative for up, positive for down
 BIG_ADD_BUTTON_FONT_SIZE = 400
 BIG_ADD_BUTTON_LABEL = '+3'
@@ -70,9 +70,9 @@ BIG_ADD_VALUE = 3
 -- Big subtract button parameters
 -- (button to subtract BIG_SUBTRACT_VALUE from the count)
 SHOW_BIG_SUBTRACT_BUTTON = true   -- Set to false for no button
-BIG_SUBTRACT_BUTTON_HEIGHT = 600
-BIG_SUBTRACT_BUTTON_WIDTH = 600
-BIG_SUBTRACT_BUTTON_HORIZONTAL_POSITION = -2.5   -- Negative for left, positive for right
+BIG_SUBTRACT_BUTTON_HEIGHT = 700
+BIG_SUBTRACT_BUTTON_WIDTH = 700
+BIG_SUBTRACT_BUTTON_HORIZONTAL_POSITION = -2.7   -- Negative for left, positive for right
 BIG_SUBTRACT_BUTTON_VERTICAL_POSITION = -1.0     -- Negative for up, positive for down
 BIG_SUBTRACT_BUTTON_FONT_SIZE = 400
 BIG_SUBTRACT_BUTTON_LABEL = '-4'
