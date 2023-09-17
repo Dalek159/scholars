@@ -11,10 +11,10 @@ function onLoad()
         ['Yellow Worker'] = Global.getVar('YellowWorkerBag'),
         ['Blue Worker'] = Global.getVar('BlueWorkerBag'),
         ['White Worker'] = Global.getVar('WhiteWorkerBag'),
-        ['Purple Influence'] = Global.getVar('PurpleInfluenceBag'),
-        ['Red Influence'] = Global.getVar('RedInfluenceBag'),
-        ['Teal Influence'] = Global.getVar('TealInfluenceBag'),
-        ['Yellow Influence'] = Global.getVar('YellowInfluenceBag'),
+        ['Purple Influence'] = Global.getTable('PlayerComponents')['Purple'].influence_bag,
+        ['Red Influence'] = Global.getTable('PlayerComponents')['Red'].influence_bag,
+        ['Teal Influence'] = Global.getTable('PlayerComponents')['Teal'].influence_bag,
+        ['Yellow Influence'] = Global.getTable('PlayerComponents')['Yellow'].influence_bag,
     }
 end
 
