@@ -31,57 +31,46 @@ function scoreGame()
         end
     end
 
-    -- local test = {
-    --     Purple = {
-    --         retired_translators = {
-    --             'guid1',
-    --             'guid2',
-    --         },
-    --         category_2 = {
-    --             'thing1',
-    --             'thing2',
-    --         }
-    --     }
-    -- }
-
-
-    -- scoring_categories = {
+    scoring_categories = {
     --     'dice_sum',
-    --     'retired_translators',
-    --     'guild_control',
+        'retired_translators',
+        'guild_control',
     --     'caliph_cards',
     --     'research_tracks',
     --     'scroll_cards',
-    -- }
-    --
-    -- end_game_state = {
-    --     'retired_translators',
-    -- }
-    PlayerEndState = {
-        Purple = {
-            retired_translators = {},
-        },
     }
-    PlayerScores = {
-        Purple = {
-            retired_translators = {
-                total = 0,
-                itemized = {},
-            },
-            guild_control = {
-                total = 0,
-                itemized = {},
-            },
-        },
+    PlayerScores = {}
+    for i, player_color in ipairs(getSeatedPlayers()) do
+        PlayerScores[player_color] = {}
+        for j, category in ipairs(scoring_categories) do
+            PlayerScores[player_color][category] = {}
+            PlayerScores[player_color][category].total = 0
+            PlayerScores[player_color][category].itemized = {}
+        end
+    end
+
+    end_game_state = {
+        'retired_translators',
     }
+    PlayerEndState = {}
+    for i, player_color in ipairs(getSeatedPlayers()) do
+        PlayerEndState[player_color] = {}
+        for j, category in ipairs(end_game_state) do
+            PlayerEndState[player_color][category] = {}
+        end
+    end
 
     assignComponents()
     scoreRetiredTranslators()
     scoreGuildControl()
 
-    print("List of all the things in Purple's scoring zone.")
-    for _, obj in ipairs(PlayerComponents['Purple'].scoring_zone.getObjects()) do
-        print('\t' .. obj.getName())
+    for _, player_color in ipairs(getSeatedPlayers()) do
+        if player_color == 'Purple' then
+            print("List of all the things in Purple's scoring zone.")
+            for _, obj in ipairs(PlayerComponents['Purple'].scoring_zone.getObjects()) do
+                print('        ' .. obj.getName())
+            end
+        end
     end
 
     displayScores()
