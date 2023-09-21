@@ -1,0 +1,33 @@
+function scoreRetiredTranslators()
+    --[[
+        Determine the points a Player scores from their
+        Retired Translators.
+
+    ]]
+    for player_color, categories_tbl in pairs(PlayerEndState) do
+        for category, cat_tbl in pairs(categories_tbl) do
+            local sum = 0
+            if category == 'retired_translators' then
+                for _, obj in pairs(cat_tbl) do
+
+                    local points = 0
+                    if EmployableTranslators[obj.getGUID()] then
+                        points = EmployableTranslators[
+                            obj.getGUID()
+                        ].points
+                    else
+                        points = StartingTranslators[
+                            obj.getGUID()
+                        ].points
+                    end
+                    sum = sum + points
+                    PlayerScores[player_color].retired_translators.itemized[
+                        obj.getName()
+                    ] = points
+                end
+                PlayerScores[player_color].retired_translators.total = sum
+            end
+        end
+    end
+
+end

@@ -1,0 +1,120 @@
+function createScoringZones(x_scale, y_scale, z_scale)
+    --[[
+        Create the zones for each seated Player that will determine
+        their end game state.
+
+        The Scripting Zones are centered on the Player's board.
+
+        Parameters
+        ----------
+        x_scale : float
+            The scale for the zone along the x-axis. Should be twice
+            the desired length of the Scripting Zone along this dimension.
+        y_scale : float
+            The scale for the zone along the y-axis. Should be twice
+            the desired length of the Scripting Zone along this dimension.
+        z_scale : float
+            The scale for the zone along the z-axis. Should be twice
+            the desired length of the Scripting Zone along this dimension.
+
+    ]]
+    for _, player_color in ipairs(getSeatedPlayers()) do
+        local pos = PlayerComponents[player_color].board.getPosition()
+        -- Bump up the zone so it "stands" on the table
+        pos = pos + Vector(0, 2.35, 0)
+        PlayerComponents[player_color].scoring_zone = spawnObject({
+            type = 'ScriptingTrigger',
+            position = pos,
+            scale = Vector(x_scale, y_scale, z_scale),
+        })
+    end
+
+end
+
+function drawScoringZoneBoundaries(x_offset, y_offset, z_offset)
+    --[[
+        Draw a rectangular footprint of the zones created by
+        createScoringZones on the x-z plane on the table so
+        that the Player can determine where all of their components
+        must be in ordered to factor into end game scoring.
+
+        Parameters
+        ----------
+        x_offset : float
+            The aboslute value of the offset along the x-axis from
+            the center of the Player board to where the vertex of
+            the rectangle should be.
+        y_offset : float
+            The aboslute value of the offset along the y-axis from
+            the center of the Player board to where the vertex of
+            the rectangle should be.
+        z_offset : float
+            The aboslute value of the offset along the z-axis from
+            the center of the Player board to where the vertex of
+            the rectangle should be.
+
+    ]]
+    local line_thickness = 0.3
+
+    -- setVectorLines will erase any existing Global vector lines,
+    -- so start by preserving any that do exist
+    local linesTable = Global.getVectorLines()
+    for _, player_color in ipairs(getSeatedPlayers()) do
+        local player_board = PlayerComponents[player_color].board
+        local top_left = player_board.getPosition() + Vector(
+            -1 * x_offset,
+            y_offset,
+            z_offset
+        )
+        local top_right = player_board.getPosition() + Vector(
+            x_offset,
+            y_offset,
+            z_offset
+        )
+        local bottom_left = player_board.getPosition() + Vector(
+            -1 * x_offset,
+            y_offset,
+            -1 * z_offset
+        )
+        local bottom_right = player_board.getPosition() + Vector(
+            x_offset,
+            y_offset,
+            -1 * z_offset
+        )
+        table.insert(
+            linesTable,
+            {
+                points = {top_left, top_right},
+                color = player_color,
+                thickness = line_thickness,
+            }
+        )
+        table.insert(
+            linesTable,
+            {
+                points = {top_right, bottom_right},
+                color = player_color,
+                thickness = line_thickness,
+            }
+        )
+        table.insert(
+            linesTable,
+            {
+                points = {bottom_right, bottom_left},
+                color = player_color,
+                thickness = line_thickness,
+            }
+        )
+        table.insert(
+            linesTable,
+            {
+                points = {bottom_left, top_left},
+                color = player_color,
+                thickness = line_thickness,
+            }
+        )
+    end
+
+    Global.setVectorLines(linesTable)
+
+end

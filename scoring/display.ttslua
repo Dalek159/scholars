@@ -1,0 +1,29 @@
+function displayScores()
+    --[[
+        Display an overview of each Player's score.
+
+        Display the overall score for each Player, as well
+        as a detailed breakdown of their points from each
+        scoring category.
+
+    ]]
+    printToAll(
+        '***************       Final Scores         ***************',
+        log_message_color
+    )
+    for _, player_color in ipairs(getSeatedPlayers()) do
+        printToAll(player_color, Color[player_color])
+        for category, cat_tbl in pairs(PlayerScores[player_color]) do
+            printToAll(
+                '   ' .. category .. ': ' .. cat_tbl.total,
+                Color[player_color]
+            )
+            for name, points in pairs(cat_tbl.itemized) do
+                printToAll(
+                    '      ' .. name .. ': ' .. points,
+                    Color[player_color]
+                )
+            end
+        end
+    end
+end

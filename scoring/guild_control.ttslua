@@ -1,0 +1,27 @@
+function scoreGuildControl()
+    --[[
+        Determine the points a Player scores from their control
+        of the various guilds.
+
+    ]]
+    for guild, guild_tbl in pairs(HouseOfWisdom) do
+        for _, obj_tbl in ipairs(guild_tbl.control_zone.getObjects()) do
+            local obj = getObjectFromGUID(obj_tbl.guid)
+            if obj.hasTag('Influence') then
+                local player_color = obj.getGMNotes()
+                local total = PlayerScores[
+                    player_color
+                ].guild_control.total
+                total = total + guild_tbl.points
+                PlayerScores[player_color].guild_control.total = total
+
+                PlayerScores[
+                    player_color
+                ].guild_control.itemized[guild] = guild_tbl.points
+
+                break
+            end
+        end
+    end
+
+end

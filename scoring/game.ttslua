@@ -1,0 +1,89 @@
+function scoreGame()
+
+    if not ScoreGameConfirmed then
+        ScoreGameConfirmed = true
+        -- Absolute value of the offsets in each direction
+        -- from the Player's board
+        local x_offset = 14
+        local y_offset = -0.15
+        local z_offset = 8
+        createScoringZones(2 * x_offset, 5.1, 2 * z_offset)
+        drawScoringZoneBoundaries(x_offset, y_offset, z_offset)
+
+        broadcastToAll(
+            'Placeholder for message telling players what to do '
+            .. 'before the game can be scored.',
+            log_message_color
+        )
+        return 0
+    end
+
+    function assignComponents()
+        for i, player_color in ipairs(getSeatedPlayers()) do
+            for j, obj in ipairs(PlayerComponents[player_color].scoring_zone.getObjects()) do
+                if obj.hasTag('Translator') then
+                    table.insert(
+                        PlayerEndState[player_color].retired_translators,
+                        obj
+                    )
+                end
+            end
+        end
+    end
+
+    -- local test = {
+    --     Purple = {
+    --         retired_translators = {
+    --             'guid1',
+    --             'guid2',
+    --         },
+    --         category_2 = {
+    --             'thing1',
+    --             'thing2',
+    --         }
+    --     }
+    -- }
+
+
+    -- scoring_categories = {
+    --     'dice_sum',
+    --     'retired_translators',
+    --     'guild_control',
+    --     'caliph_cards',
+    --     'research_tracks',
+    --     'scroll_cards',
+    -- }
+    --
+    -- end_game_state = {
+    --     'retired_translators',
+    -- }
+    PlayerEndState = {
+        Purple = {
+            retired_translators = {},
+        },
+    }
+    PlayerScores = {
+        Purple = {
+            retired_translators = {
+                total = 0,
+                itemized = {},
+            },
+            guild_control = {
+                total = 0,
+                itemized = {},
+            },
+        },
+    }
+
+    assignComponents()
+    scoreRetiredTranslators()
+    scoreGuildControl()
+
+    print("List of all the things in Purple's scoring zone.")
+    for _, obj in ipairs(PlayerComponents['Purple'].scoring_zone.getObjects()) do
+        print('\t' .. obj.getName())
+    end
+
+    displayScores()
+
+end
