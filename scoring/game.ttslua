@@ -29,6 +29,7 @@ function scoreGame()
                 end
             end
 
+            -- Determine the Level of each Research Track
             for track, marker in pairs(PlayerComponents[player_color].research_markers) do
                 if marker.getPosition().z >= 6.0 then
                     PlayerEndState[player_color].research_tracks[track] = 'Level 7'
@@ -48,6 +49,7 @@ function scoreGame()
                     PlayerEndState[player_color].research_tracks[track] = 'Level 0'
                 end
             end
+
         end
     end
 
@@ -55,7 +57,7 @@ function scoreGame()
     --     'dice_sum',
         'retired_translators',
         'guild_control',
-    --     'caliph_cards',
+        'caliph_cards',
         'research_tracks',
     --     'scroll_cards',
     }
@@ -72,6 +74,13 @@ function scoreGame()
     end_game_state = {
         'retired_translators',
         'research_tracks',
+        ['White Die'],
+        ['Red Die'],
+        ['Blue Die'],
+        ['Yellow Die'],
+        ['Purple Die'],
+        ['Orange Die'],
+        ['Green Die'],
     }
     PlayerEndState = {}
     for i, player_color in ipairs(getSeatedPlayers()) do
@@ -84,6 +93,7 @@ function scoreGame()
     assignComponents()
     scoreRetiredTranslators()
     scoreGuildControl()
+    scoreCaliphCards()
     scoreResearchTracks()
 
     for _, player_color in ipairs(getSeatedPlayers()) do
