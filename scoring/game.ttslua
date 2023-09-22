@@ -28,6 +28,26 @@ function scoreGame()
                     )
                 end
             end
+
+            for track, marker in pairs(PlayerComponents[player_color].research_markers) do
+                if marker.getPosition().z >= 6.0 then
+                    PlayerEndState[player_color].research_tracks[track] = 'Level 7'
+                elseif marker.getPosition().z >= 5.1 then
+                    PlayerEndState[player_color].research_tracks[track] = 'Level 6'
+                elseif marker.getPosition().z >= 4.2 then
+                    PlayerEndState[player_color].research_tracks[track] = 'Level 5'
+                elseif marker.getPosition().z >= 3.2 then
+                    PlayerEndState[player_color].research_tracks[track] = 'Level 4'
+                elseif marker.getPosition().z >= 2.3 then
+                    PlayerEndState[player_color].research_tracks[track] = 'Level 3'
+                elseif marker.getPosition().z >= 1.4 then
+                    PlayerEndState[player_color].research_tracks[track] = 'Level 2'
+                elseif marker.getPosition().z >= 0.5 then
+                    PlayerEndState[player_color].research_tracks[track] = 'Level 1'
+                else
+                    PlayerEndState[player_color].research_tracks[track] = 'Level 0'
+                end
+            end
         end
     end
 
@@ -36,7 +56,7 @@ function scoreGame()
         'retired_translators',
         'guild_control',
     --     'caliph_cards',
-    --     'research_tracks',
+        'research_tracks',
     --     'scroll_cards',
     }
     PlayerScores = {}
@@ -51,6 +71,7 @@ function scoreGame()
 
     end_game_state = {
         'retired_translators',
+        'research_tracks',
     }
     PlayerEndState = {}
     for i, player_color in ipairs(getSeatedPlayers()) do
@@ -63,6 +84,7 @@ function scoreGame()
     assignComponents()
     scoreRetiredTranslators()
     scoreGuildControl()
+    scoreResearchTracks()
 
     for _, player_color in ipairs(getSeatedPlayers()) do
         if player_color == 'Purple' then
