@@ -12,18 +12,27 @@ function displayScores()
         log_message_color
     )
     for _, player_color in ipairs(getSeatedPlayers()) do
-        printToAll(player_color, Color[player_color])
+        printToAll(
+            '********** ' .. player_color .. ' **********',
+            Color[player_color]
+        )
         for category, cat_tbl in pairs(PlayerScores[player_color]) do
             printToAll(
-                '   ' .. category .. ': ' .. cat_tbl.total,
-                Color[player_color]
+                category .. ': ' .. cat_tbl.total,
+                Color.White
             )
             for name, points in pairs(cat_tbl.itemized) do
                 printToAll(
-                    '      ' .. name .. ': ' .. points,
-                    Color[player_color]
+                    '            ' .. name .. ': ' .. points,
+                    Color.White
                 )
             end
         end
+
+        printToAll(
+            '**************************',
+            Color[player_color]
+        )
+
     end
 end
