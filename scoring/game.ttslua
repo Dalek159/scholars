@@ -16,6 +16,48 @@ function scoreGame()
             log_message_color
         )
         return 0
+    -- Second time, clean up each Player's area
+    else
+        for _, player_color in ipairs(getSeatedPlayers()) do
+            for _, obj in ipairs(PlayerComponents[player_color].rest_zone.getObjects()) do
+                if obj.getGMNotes() == 'Worker' then
+                    obj.destruct()
+                end
+            end
+
+            for _, obj in ipairs(PlayerComponents[player_color].scoring_zone.getObjects()) do
+                if obj.getGMNotes() == 'Dice' then
+
+                    if obj.getLock() then
+                        obj.setLock(false)
+                        local supply_bag = nil
+                        if obj.getName() == 'Purple Die' then
+                            supply_bag = PurpleDiceBag
+                        elseif obj.getName() == 'Orange Die' then
+                            supply_bag = OrangeDiceBag
+                        elseif obj.getName() == 'Green Die' then
+                            supply_bag = GreenDiceBag
+                        end
+
+                        supply_bag.putObject(obj)
+                    else
+                        PlayerComponents[player_color].dice_bag.putObject(obj)
+                    end
+                end
+            end
+        end
+
+        -- If the Players are rescoring, move any Influence
+        -- Markers from the Dice Sum scoring area
+        for _, zone_tbl in ipairs(DiceSumZones) do
+            for _, obj in ipairs(zone_tbl.zone.getObjects()) do
+                if obj.hasTag('Influence') then
+                    PlayerComponents[
+                        obj.getGMNotes()
+                    ].influence_bag.putObject(obj)
+                end
+            end
+        end
     end
 
     function assignComponents()
@@ -50,11 +92,30 @@ function scoreGame()
                 end
             end
 
+            -- Determine how many dice a player has
+            local types_of_dice = {
+                'White Die',
+                'Red Die',
+                'Blue Die',
+                'Yellow Die',
+                'Purple Die',
+                'Orange Die',
+                'Green Die',
+            }
+            for _, die_type in ipairs(types_of_dice) do
+                PlayerEndState[player_color][die_type].num = 0
+            end
+
+            for _, obj_tbl in ipairs(PlayerComponents[player_color].dice_bag.getObjects()) do
+                local total = PlayerEndState[player_color][obj_tbl.name].num
+                PlayerEndState[player_color][obj_tbl.name].num = total + 1
+            end
         end
+
     end
 
     scoring_categories = {
-    --     'dice_sum',
+        'dice_sum',
         'retired_translators',
         'guild_control',
         'caliph_cards',
@@ -74,13 +135,13 @@ function scoreGame()
     end_game_state = {
         'retired_translators',
         'research_tracks',
-        ['White Die'],
-        ['Red Die'],
-        ['Blue Die'],
-        ['Yellow Die'],
-        ['Purple Die'],
-        ['Orange Die'],
-        ['Green Die'],
+        'White Die',
+        'Red Die',
+        'Blue Die',
+        'Yellow Die',
+        'Purple Die',
+        'Orange Die',
+        'Green Die',
     }
     PlayerEndState = {}
     for i, player_color in ipairs(getSeatedPlayers()) do
@@ -95,15 +156,16 @@ function scoreGame()
     scoreGuildControl()
     scoreCaliphCards()
     scoreResearchTracks()
+    scoreDiceSum()
 
-    for _, player_color in ipairs(getSeatedPlayers()) do
-        if player_color == 'Purple' then
-            print("List of all the things in Purple's scoring zone.")
-            for _, obj in ipairs(PlayerComponents['Purple'].scoring_zone.getObjects()) do
-                print('        ' .. obj.getName())
-            end
-        end
-    end
+    -- for _, player_color in ipairs(getSeatedPlayers()) do
+    --     if player_color == 'Purple' then
+    --         print("List of all the things in Purple's scoring zone.")
+    --         for _, obj in ipairs(PlayerComponents['Purple'].scoring_zone.getObjects()) do
+    --             print('        ' .. obj.getName())
+    --         end
+    --     end
+    -- end
 
     displayScores()
 
