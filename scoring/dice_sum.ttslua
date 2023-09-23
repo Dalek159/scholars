@@ -1,0 +1,99 @@
+function scoreDiceSum()
+    --[[
+        Determine the points a Player scores from their Dice Sum.
+
+    ]]
+    local types_of_dice = {
+        'White Die',
+        'Red Die',
+        'Blue Die',
+        'Yellow Die',
+        'Purple Die',
+        'Orange Die',
+        'Green Die',
+    }
+    local dice_sum_tbl = {}
+    for player_color, tbl in pairs(PlayerEndState) do
+        local num_of_colored_dice = 0
+
+        for _, die_type in ipairs(types_of_dice) do
+            if die_type ~= 'White Die' then
+                num_of_colored_dice = num_of_colored_dice + tbl[die_type].num
+            end
+        end
+
+        table.insert(
+            dice_sum_tbl,
+            {
+                player = player_color,
+                dice_sum = num_of_colored_dice - tbl['White Die'].num
+            }
+        )
+
+        PlayerScores[player_color].dice_sum.itemized[
+            'Dice Sum'
+        ] = num_of_colored_dice - tbl['White Die'].num
+        PlayerScores[player_color].dice_sum.itemized[
+            'Number of Colored Dice'
+        ] = num_of_colored_dice
+        PlayerScores[player_color].dice_sum.itemized[
+            'Number of White Dice'
+        ] = tbl['White Die'].num
+    end
+
+
+    function orderTable(t)
+        -- Lua can't handle "or equal to" comparisons
+        local ascending = function(a, b) return a.dice_sum < b.dice_sum end
+        table.sort(t, ascending)
+
+        return t
+    end
+
+    dice_sum_tbl = orderTable(dice_sum_tbl)
+
+    -- Place Player's Influence Markers in the Dice Sum scoring area
+    for zone_idx, tbl in ipairs(dice_sum_tbl) do
+        -- Zones measure position from their center
+        -- Influence Markers measure position from their top mid
+        PlayerComponents[tbl.player].influence_bag.takeObject({
+            position = DiceSumZones[zone_idx].zone.getPosition() + Vector(
+                0, 0, 0.25
+            ),
+        })
+    end
+
+    -- Divvy out points
+    local N = #getSeatedPlayers()
+    local i = 1
+    while i <= N do
+        local player_i = dice_sum_tbl[i].player
+        local dice_sum_i = dice_sum_tbl[i].dice_sum
+        local num_of_ties = 0
+
+        for j = i + 1, N do
+            local dice_sum_j = dice_sum_tbl[j].dice_sum
+            if dice_sum_i == dice_sum_j then
+                num_of_ties = num_of_ties + 1
+            else
+                break
+            end
+        end
+
+        local points_pool = 0
+        for k = 0, num_of_ties do
+            points_pool = points_pool + DiceSumZones[i + k].points
+        end
+        local points_per_player = math.floor(points_pool / (num_of_ties + 1))
+
+        for k = 0, num_of_ties do
+            PlayerScores[
+                dice_sum_tbl[i + k].player
+            ].dice_sum.total = points_per_player
+        end
+
+        -- Skip to the first player not involved in the tie
+        i = i + (num_of_ties + 1)
+    end
+
+end
