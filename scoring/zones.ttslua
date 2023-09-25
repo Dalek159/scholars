@@ -118,3 +118,31 @@ function drawScoringZoneBoundaries(x_offset, y_offset, z_offset)
     Global.setVectorLines(linesTable)
 
 end
+
+function createGuildMembershipZones()
+    --[[
+        Create the zones that will be used to gauge a
+        Player's membership with the Guilds.
+
+        Membership here is denoted by the number of a Player's
+        Influence Markers that are present.
+
+    ]]
+    HouseOfWisdom.purple.membership_zone = spawnObject({
+        type = 'ScriptingTrigger',
+        position = Vector(13.30, 1.92, 12.08),
+        scale = Vector(3.10, 1.50, 3.65),
+    })
+
+    HouseOfWisdom.orange.membership_zone = spawnObject({
+        type = 'ScriptingTrigger',
+        position = Vector(16.50, 1.92, 12.08),
+        scale = Vector(3.10, 1.50, 3.65),
+    })
+
+    HouseOfWisdom.green.membership_zone = spawnObject({
+        type = 'ScriptingTrigger',
+        position = Vector(19.70, 1.92, 12.08),
+        scale = Vector(3.10, 1.50, 3.65),
+    })
+end
