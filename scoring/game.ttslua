@@ -89,13 +89,19 @@ function scoreGame()
                 elseif obj.getName() == 'Silver' then
                     local silver_total = PlayerEndState[player_color].Silver.num
                     PlayerEndState[player_color].Silver.num = silver_total + 1
-                    -- table.insert(
-                    --     PlayerEndState[player_color].Silver,
-                    --     obj
-                    -- )
+                elseif obj.getName() == 'Silver Counter' then
+                    local silver_total = PlayerEndState[player_color].Silver.num
+                    -- The "count" button is the first button on the counter
+                    local val = obj.getButtons()[1].label
+                    PlayerEndState[player_color].Silver.num = silver_total + val
                 elseif obj.getName() == 'Gold' then
                     local gold_total = PlayerEndState[player_color].Gold.num
                     PlayerEndState[player_color].Gold.num = gold_total + 1
+                elseif obj.getName() == 'Gold Counter' then
+                    local gold_total = PlayerEndState[player_color].Gold.num
+                    -- The "count" button is the first button on the counter
+                    local val = obj.getButtons()[1].label
+                    PlayerEndState[player_color].Gold.num = gold_total + val
                 elseif obj.hasTag('Scroll') then
                     -- Add to the list of scrolls the Player has
                     table.insert(
