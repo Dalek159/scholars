@@ -1,0 +1,551 @@
+bonusScoringStarter = function(params)
+    --[[
+
+    Parameters
+    ----------
+    params : table
+        A table containing a single entry, 'player_color'.
+    ]]
+    local silver_total = PlayerEndState[params.player_color].Silver.num
+    local gold_total = PlayerEndState[params.player_color].Gold.num
+
+    gold_total = gold_total + math.floor(silver_total / 2)
+
+    local points = math.floor(gold_total / 2)
+    if PlayerEndState[params.player_color]['White Die'].num >= 6 then
+        points = points - 3
+    end
+
+    return points
+end
+
+bonusScoringNone = function(params) return 0 end
+
+bonusScoringWhiteDice = function(params)
+    --[[
+
+    Parameters
+    ----------
+    params : table
+        A table containing a single entry, 'player_color'.
+    ]]
+    if PlayerEndState[params.player_color]['White Die'].num == 0 then
+        return 4
+    elseif PlayerEndState[params.player_color]['White Die'].num <= 3 then
+        return 2
+    else
+        return 0
+    end
+end
+
+bonusScoringOtherLanguages = function(params)
+    local total = 0
+    for _, language in ipairs(params.languages) do
+        total = total + PlayerEndState[
+            params.player_color]['Translated Scrolls'
+        ][language]
+    end
+    return total
+end
+
+bonusScoringRetiredTranslators = function(params)
+    --[[
+
+    Parameters
+    ----------
+    params : table
+        A table containing a single entry, 'player_color'.
+    ]]
+    -- PlayerEndState[params.player_color].retired_translators is an
+    -- integer-indexed table containing the Player's Retired Translators
+    if #PlayerEndState[params.player_color].retired_translators == 7 then
+        return 4
+    elseif #PlayerEndState[params.player_color].retired_translators >= 4 then
+        return 2
+    else
+        return 0
+    end
+end
+
+bonusScoringGuildMembership = function(params)
+    --[[
+    Return the points a Player's membership in the specified Guild awards.
+
+    If a Player has 2-3 Influence Markers in the Guild, they receive 2 points.
+    If they have 4+ Influence Markers in the Guild, then they received 4 points.
+    Otherwise, 0 points.
+
+    Parameters
+    ----------
+    params : table
+        A table containing the keys 'player_color' and 'guild', where
+        'guild' is the guild for which the Player's membership is to
+        be evaluated.
+
+    Returns
+    -------
+    int
+        The number of points a Player's membership in the Guild awards.
+
+    ]]
+    local guild_membership = PlayerEndState[params.player_color][
+        'Guild Membership'][params.guild]
+
+    if guild_membership >= 4 then
+        return 4
+    elseif guild_membership >= 2 then
+        return 2
+    else
+        return 0
+    end
+end
+
+bonusScoringResearchTrack = function(params)
+    --[[
+
+    Parameters
+    ----------
+    params : table
+        A table containing 2 keys: "player_color" and "research_track"
+    ]]
+    -- This is a string; e.g. "Level 4"
+    local research_level = PlayerEndState[
+        params.player_color].research_tracks[params.research_track
+    ]
+    research_level = tonumber(string.sub(research_level, -1))
+    if research_level == 7 then
+        return 4
+    elseif research_level >= 4 then
+        return 2
+    else
+        return 0
+    end
+
+end
+
+bonusScoringBreadthOfResearch = function(params)
+    --[[
+    Return the points a Player scores based on the breadth of their Research.
+
+    A Player will receive 1 point for every Research Track where they are
+    Level 3 or higher.
+
+    Parameters
+    ----------
+    params : table
+        A table containing a single entry, 'player_color'.
+
+    Returns
+    -------
+    int
+        The points a Player scores based on the breadth of their Research.
+
+    ]]
+    local breadth_num = 0
+    for track, level_text in pairs(PlayerEndState[params.player_color].research_tracks) do
+        level_num = tonumber(string.sub(level_text, -1))
+        if level_num >= 3 then
+            breadth_num = breadth_num + 1
+        end
+    end
+
+    return breadth_num
+end
+
+bonusScoringColoredDice = function(params)
+    local total = PlayerEndState[params.player_color][params.secondary_die].num
+    if PlayerEndState[params.player_color][params.primary_die].num >= 4 then
+        total = total + 2
+    end
+
+    return total
+end
+
+
+ScrollCards = {
+    -- Starting Scrolls
+    ['644ada'] = {
+        name = 'Starting Chinese',
+        language = 'Chinese',
+        base_points = 3,
+        bonus_points = bonusScoringStarter,
+        bonus_params = {},
+    },
+    ['1c5d5d'] = {
+        name = 'Starting Sanskrit',
+        language = 'Sanskrit',
+        base_points = 3,
+        bonus_points = bonusScoringStarter,
+        bonus_params = {},
+    },
+    ['5bb784'] = {
+        name = 'Starting Greek',
+        language = 'Greek',
+        base_points = 3,
+        bonus_points = bonusScoringStarter,
+        bonus_params = {},
+    },
+    ['348378'] = {
+        name = 'Starting Hebrew',
+        language = 'Hebrew',
+        base_points = 3,
+        bonus_points = bonusScoringStarter,
+        bonus_params = {},
+    },
+    ['60327a'] = {
+        name = 'Starting Persian',
+        language = 'Persian',
+        base_points = 3,
+        bonus_points = bonusScoringStarter,
+        bonus_params = {},
+    },
+    ['5d735d'] = {
+        name = 'Starting Syriac',
+        language = 'Syriac',
+        base_points = 3,
+        bonus_points = bonusScoringStarter,
+        bonus_params = {},
+    },
+    -- Chinese Scrolls
+    ['565191'] = {
+        name = 'Chinese A',
+        language = 'Chinese',
+        base_points = 5,
+        bonus_points = bonusScoringNone,
+        bonus_params = {},
+    },
+    ['4aac93'] = {
+        name = 'Chinese B',
+        language = 'Chinese',
+        base_points = 5,
+        bonus_points = bonusScoringGuildMembership,
+        bonus_params = {guild = 'green'},
+    },
+    ['8fdbdc'] = {
+        name = 'Chinese C',
+        language = 'Chinese',
+        base_points = 5,
+        bonus_points = bonusScoringOtherLanguages,
+        bonus_params = {languages = {'Chinese'}},
+    },
+    ['bffb61'] = {
+        name = 'Chinese D',
+        language = 'Chinese',
+        base_points = 5,
+        bonus_points = bonusScoringOtherLanguages,
+        bonus_params = {languages = {'Hebrew', 'Persian'}},
+    },
+    ['701608'] = {
+        name = 'Chinese E',
+        language = 'Chinese',
+        base_points = 4,
+        bonus_points = bonusScoringColoredDice,
+        bonus_params = {primary_die = 'Blue Die', secondary_die = 'Purple Die'},
+    },
+    ['1a403d'] = {
+        name = 'Chinese F',
+        language = 'Chinese',
+        base_points = 4,
+        bonus_points = bonusScoringResearchTrack,
+        bonus_params = {research_track = 'Astronomy'},
+    },
+    ['252233'] = {
+        name = 'Chinese G',
+        language = 'Chinese',
+        base_points = 4,
+        bonus_points = bonusScoringResearchTrack,
+        bonus_params = {research_track = 'Physics'},
+    },
+    ['cd5ddc'] = {
+        name = 'Chinese H',
+        language = 'Chinese',
+        base_points = 4,
+        bonus_points = bonusScoringWhiteDice,
+        bonus_params = {},
+    },
+    -- Sanskrit Scrolls
+    ['f31100'] = {
+        name = 'Sanskrit A',
+        language = 'Sanskrit',
+        base_points = 5,
+        bonus_points = bonusScoringNone,
+        bonus_params = {},
+    },
+    ['df7ccf'] = {
+        name = 'Sanskrit B',
+        language = 'Sanskrit',
+        base_points = 5,
+        bonus_points = bonusScoringGuildMembership,
+        bonus_params = {guild = 'orange'},
+    },
+    ['0c016c'] = {
+        name = 'Sanskrit C',
+        language = 'Sanskrit',
+        base_points = 5,
+        bonus_points = bonusScoringOtherLanguages,
+        bonus_params = {languages = {'Sanskrit'}},
+    },
+    ['0987d0'] = {
+        name = 'Sanskrit D',
+        language = 'Sanskrit',
+        base_points = 5,
+        bonus_points = bonusScoringOtherLanguages,
+        bonus_params = {languages = {'Greek', 'Persian'}},
+    },
+    ['42c321'] = {
+        name = 'Sanskrit E',
+        language = 'Sanskrit',
+        base_points = 4,
+        bonus_points = bonusScoringColoredDice,
+        bonus_params = {primary_die = 'Yellow Die', secondary_die = 'Orange Die'},
+    },
+    ['bab047'] = {
+        name = 'Sanskrit F',
+        language = 'Sanskrit',
+        base_points = 4,
+        bonus_points = bonusScoringResearchTrack,
+        bonus_params = {research_track = 'Mathematics'},
+    },
+    ['acc896'] = {
+        name = 'Sanskrit G',
+        language = 'Sanskrit',
+        base_points = 4,
+        bonus_points = bonusScoringResearchTrack,
+        bonus_params = {research_track = 'Biology'},
+    },
+    ['7dfe73'] = {
+        name = 'Sanskrit H',
+        language = 'Sanskrit',
+        base_points = 4,
+        bonus_points = bonusScoringRetiredTranslators,
+        bonus_params = {},
+    },
+    -- Greek Scrolls
+    ['737482'] = {
+      name = 'Greek A',
+      language = 'Greek',
+      base_points = 3,
+      bonus_points = bonusScoringNone,
+      bonus_params = {},
+    },
+    ['6c05b4'] = {
+      name = 'Greek B',
+      language = 'Greek',
+      base_points = 3,
+      bonus_points = bonusScoringGuildMembership,
+      bonus_params = {guild = 'orange'},
+    },
+    ['7dbadd'] = {
+      name = 'Greek C',
+      language = 'Greek',
+      base_points = 3,
+      bonus_points = bonusScoringOtherLanguages,
+      bonus_params = {languages = {'Greek'}},
+    },
+    ['fcb2f1'] = {
+      name = 'Greek D',
+      language = 'Greek',
+      base_points = 3,
+      bonus_points = bonusScoringOtherLanguages,
+      bonus_params = {languages = {'Sanskrit', 'Syriac'}},
+    },
+    ['300b3f'] = {
+      name = 'Greek E',
+      language = 'Greek',
+      base_points = 2,
+      bonus_points = bonusScoringColoredDice,
+      bonus_params = {primary_die = 'Blue Die', secondary_die = 'Green Die'},
+    },
+    ['75670c'] = {
+      name = 'Greek F',
+      language = 'Greek',
+      base_points = 2,
+      bonus_points = bonusScoringResearchTrack,
+      bonus_params = {research_track = 'Mathematics'},
+    },
+    ['c94b96'] = {
+      name = 'Greek G',
+      language = 'Greek',
+      base_points = 2,
+      bonus_points = bonusScoringResearchTrack,
+      bonus_params = {research_track = 'Chemistry'},
+    },
+    ['c77dee'] = {
+      name = 'Greek H',
+      language = 'Greek',
+      base_points = 2,
+      bonus_points = bonusScoringResearchTrack,
+      bonus_params = {research_track = 'Philosophy'},
+    },
+    -- Hebrew Scrolls
+    ['c0b5bf'] = {
+      name = 'Hebrew A',
+      language = 'Hebrew',
+      base_points = 3,
+      bonus_points = bonusScoringNone,
+      bonus_params = {},
+    },
+    ['3efc53'] = {
+      name = 'Hebrew B',
+      language = 'Hebrew',
+      base_points = 3,
+      bonus_points = bonusScoringGuildMembership,
+      bonus_params = {guild = 'purple'},
+    },
+    ['877250'] = {
+      name = 'Hebrew C',
+      language = 'Hebrew',
+      base_points = 3,
+      bonus_points = bonusScoringOtherLanguages,
+      bonus_params = {languages = {'Hebrew'}},
+    },
+    ['cdd089'] = {
+      name = 'Hebrew D',
+      language = 'Hebrew',
+      base_points = 3,
+      bonus_points = bonusScoringOtherLanguages,
+      bonus_params = {languages = {'Chinese', 'Syriac'}},
+    },
+    ['66643a'] = {
+      name = 'Hebrew E',
+      language = 'Hebrew',
+      base_points = 2,
+      bonus_points = bonusScoringColoredDice,
+      bonus_params = {primary_die = 'Red Die', secondary_die = 'Orange Die'},
+    },
+    ['3b79e9'] = {
+      name = 'Hebrew F',
+      language = 'Hebrew',
+      base_points = 2,
+      bonus_points = bonusScoringResearchTrack,
+      bonus_params = {research_track = 'Philosophy'},
+    },
+    ['547a81'] = {
+      name = 'Hebrew G',
+      language = 'Hebrew',
+      base_points = 2,
+      bonus_points = bonusScoringResearchTrack,
+      bonus_params = {research_track = 'Biology'},
+    },
+    ['3784ae'] = {
+      name = 'Hebrew H',
+      language = 'Hebrew',
+      base_points = 2,
+      bonus_points = bonusScoringRetiredTranslators,
+      bonus_params = {},
+    },
+    -- Persian Scrolls
+    ['66e645'] = {
+      name = 'Persian A',
+      language = 'Persian',
+      base_points = 1,
+      bonus_points = bonusScoringNone,
+      bonus_params = {},
+    },
+    ['a7fc39'] = {
+      name = 'Persian B',
+      language = 'Persian',
+      base_points = 1,
+      bonus_points = bonusScoringGuildMembership,
+      bonus_params = {guild = 'purple'},
+    },
+    ['ed43de'] = {
+      name = 'Persian C',
+      language = 'Persian',
+      base_points = 1,
+      bonus_points = bonusScoringOtherLanguages,
+      bonus_params = {languages = {'Persian'}},
+    },
+    ['d13ccc'] = {
+      name = 'Persian D',
+      language = 'Persian',
+      base_points = 1,
+      bonus_points = bonusScoringOtherLanguages,
+      bonus_params = {languages = {'Chinese', 'Sanskrit'}},
+    },
+    ['8218c6'] = {
+      name = 'Persian E',
+      language = 'Persian',
+      base_points = 1,
+      bonus_points = bonusScoringColoredDice,
+      bonus_params = {primary_die = 'Yellow Die', secondary_die = 'Green Die'},
+    },
+    ['61dbfd'] = {
+      name = 'Persian F',
+      language = 'Persian',
+      base_points = 1,
+      bonus_points = bonusScoringResearchTrack,
+      bonus_params = {research_track = 'Chemistry'},
+    },
+    ['18a235'] = {
+      name = 'Persian G',
+      language = 'Persian',
+      base_points = 1,
+      bonus_points = bonusScoringWhiteDice,
+      bonus_params = {},
+    },
+    ['dd46d0'] = {
+      name = 'Persian H',
+      language = 'Persian',
+      base_points = 1,
+      bonus_points = bonusScoringBreadthOfResearch,
+      bonus_params = {},
+    },
+    -- Syriac Scrolls
+    ['599076'] = {
+      name = 'Syriac A',
+      language = 'Syriac',
+      base_points = 1,
+      bonus_points = bonusScoringNone,
+      bonus_params = {},
+    },
+    ['67a022'] = {
+      name = 'Syriac B',
+      language = 'Syriac',
+      base_points = 1,
+      bonus_points = bonusScoringGuildMembership,
+      bonus_params = {guild = 'green'},
+    },
+    ['b6770b'] = {
+      name = 'Syriac C',
+      language = 'Syriac',
+      base_points = 1,
+      bonus_points = bonusScoringOtherLanguages,
+      bonus_params = {languages = {'Syriac'}},
+    },
+    ['d1439f'] = {
+      name = 'Syriac D',
+      language = 'Syriac',
+      base_points = 1,
+      bonus_points = bonusScoringOtherLanguages,
+      bonus_params = {languages = {'Greek', 'Hebrew'}},
+    },
+    ['92f8bb'] = {
+      name = 'Syriac E',
+      language = 'Syriac',
+      base_points = 1,
+      bonus_points = bonusScoringColoredDice,
+      bonus_params = {primary_die = 'Red Die', secondary_die = 'Purple Die'},
+    },
+    ['771199'] = {
+      name = 'Syriac F',
+      language = 'Syriac',
+      base_points = 1,
+      bonus_points = bonusScoringResearchTrack,
+      bonus_params = {research_track = 'Physics'},
+    },
+    ['c70067'] = {
+      name = 'Syriac G',
+      language = 'Syriac',
+      base_points = 1,
+      bonus_points = bonusScoringResearchTrack,
+      bonus_params = {research_track = 'Astronomy'},
+    },
+    ['10007a'] = {
+      name = 'Syriac H',
+      language = 'Syriac',
+      base_points = 1,
+      bonus_points = bonusScoringBreadthOfResearch,
+      bonus_params = {},
+    },
+}

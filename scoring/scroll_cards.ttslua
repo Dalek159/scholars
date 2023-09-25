@@ -1,0 +1,31 @@
+function scoreScrollCards()
+    --[[
+        Determine the points a Player scores from any Scroll
+        Cards they have translated.
+
+    ]]
+    for player_color, categories_tbl in pairs(PlayerEndState) do
+        local list_of_scrolls = categories_tbl.scroll_cards
+        local total = 0
+        for _, scroll_card in ipairs(list_of_scrolls) do
+            local scroll_tbl = ScrollCards[scroll_card.getGUID()]
+            local bonus_params = {player_color = player_color}
+            for k, v in pairs(scroll_tbl.bonus_params) do
+                bonus_params[k] = v
+            end
+
+            local scroll_pts = scroll_tbl.base_points
+            scroll_pts = scroll_pts + scroll_tbl.bonus_points(bonus_params)
+
+
+            PlayerScores[player_color].scroll_cards.itemized[
+                scroll_card.getName()
+            ] = scroll_pts
+
+            total = total + scroll_pts
+        end
+
+        PlayerScores[player_color].scroll_cards.total = total
+    end
+
+end
