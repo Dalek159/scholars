@@ -6,9 +6,11 @@ function scoreGame()
         -- from the Player's board
         local x_offset = 14
         local y_offset = -0.15
-        local z_offset = 8
+        local z_offset = 9
         createScoringZones(2 * x_offset, 5.1, 2 * z_offset)
         drawScoringZoneBoundaries(x_offset, y_offset, z_offset)
+        createGuildMembershipZones()
+
 
         broadcastToAll(
             'Placeholder for message telling players what to do '
@@ -62,12 +64,52 @@ function scoreGame()
 
     function assignComponents()
         for i, player_color in ipairs(getSeatedPlayers()) do
+            -- Assume Players have no Silver or Gold to start
+            PlayerEndState[player_color].Silver.num = 0
+            PlayerEndState[player_color].Gold.num = 0
+            -- Assume Players have translated no scrolls
+            languages = {
+                'Chinese',
+                'Sanskrit',
+                'Greek',
+                'Hebrew',
+                'Persian',
+                'Syriac'
+            }
+            for _, language in ipairs(languages) do
+                PlayerEndState[player_color]['Translated Scrolls'][language] = 0
+            end
+
             for j, obj in ipairs(PlayerComponents[player_color].scoring_zone.getObjects()) do
                 if obj.hasTag('Translator') then
                     table.insert(
                         PlayerEndState[player_color].retired_translators,
                         obj
                     )
+                elseif obj.getName() == 'Silver' then
+                    local silver_total = PlayerEndState[player_color].Silver.num
+                    PlayerEndState[player_color].Silver.num = silver_total + 1
+                    -- table.insert(
+                    --     PlayerEndState[player_color].Silver,
+                    --     obj
+                    -- )
+                elseif obj.getName() == 'Gold' then
+                    local gold_total = PlayerEndState[player_color].Gold.num
+                    PlayerEndState[player_color].Gold.num = gold_total + 1
+                elseif obj.hasTag('Scroll') then
+                    -- Add to the list of scrolls the Player has
+                    table.insert(
+                        PlayerEndState[player_color].scroll_cards,
+                        obj
+                    )
+                    -- Add 1 to the language total
+                    local lang_total = PlayerEndState[player_color][
+                        'Translated Scrolls'][ScrollCards[obj.getGUID()
+                        ].language
+                    ]
+                    PlayerEndState[player_color]['Translated Scrolls'][
+                        ScrollCards[obj.getGUID()].language
+                    ] = lang_total + 1
                 end
             end
 
@@ -110,6 +152,27 @@ function scoreGame()
                 local total = PlayerEndState[player_color][obj_tbl.name].num
                 PlayerEndState[player_color][obj_tbl.name].num = total + 1
             end
+
+        end
+
+        -- Determine a Player's Guild Membership
+        for guild, guild_tbl in pairs(HouseOfWisdom) do
+            local guild_membership = {}
+            for _, player_color in ipairs(getSeatedPlayers()) do
+                guild_membership[player_color] = 0
+            end
+            for _, obj in pairs(guild_tbl.membership_zone.getObjects()) do
+                if obj.hasTag('Influence') then
+                    local tally = guild_membership[obj.getGMNotes()]
+                    guild_membership[obj.getGMNotes()] = tally + 1
+                end
+            end
+
+            for _, player_color in ipairs(getSeatedPlayers()) do
+                PlayerEndState[player_color]['Guild Membership'][
+                    guild
+                ] = guild_membership[player_color]
+            end
         end
 
     end
@@ -120,7 +183,7 @@ function scoreGame()
         'guild_control',
         'caliph_cards',
         'research_tracks',
-    --     'scroll_cards',
+        'scroll_cards',
     }
     PlayerScores = {}
     for i, player_color in ipairs(getSeatedPlayers()) do
@@ -130,9 +193,13 @@ function scoreGame()
             PlayerScores[player_color][category].total = 0
             PlayerScores[player_color][category].itemized = {}
         end
+
+        PlayerScores[player_color].total = 0
     end
 
     end_game_state = {
+        'Silver',
+        'Gold',
         'retired_translators',
         'research_tracks',
         'White Die',
@@ -142,6 +209,9 @@ function scoreGame()
         'Purple Die',
         'Orange Die',
         'Green Die',
+        'scroll_cards',
+        'Translated Scrolls',
+        'Guild Membership',
     }
     PlayerEndState = {}
     for i, player_color in ipairs(getSeatedPlayers()) do
@@ -157,6 +227,17 @@ function scoreGame()
     scoreCaliphCards()
     scoreResearchTracks()
     scoreDiceSum()
+    scoreScrollCards()
+
+    -- Add up the Players' totals
+    for _, player_color in ipairs(getSeatedPlayers()) do
+        for category, cat_table in pairs(PlayerScores[player_color]) do
+            if category ~= 'total' then
+                PlayerScores[player_color].total = PlayerScores[
+                    player_color].total + cat_table.total
+            end
+        end
+    end
 
     -- for _, player_color in ipairs(getSeatedPlayers()) do
     --     if player_color == 'Purple' then
