@@ -1,0 +1,20 @@
+function setDraftOrder()
+    --[[
+        Set the draft order as the reverse of the turn order.
+
+    ]]
+    local draftOrder = {}
+
+    for i = #getSeatedPlayers(), 1, -1 do
+        table.insert(draftOrder, turnOrder[i])
+    end
+
+    Turns.order = draftOrder -- also changes Turns.type to 2 (custom)
+    Turns.turn_color = draftOrder[1]
+
+    printToAll('Draft order will be:', log_message_color)
+    for idx, player_color in ipairs(draftOrder) do
+        printToAll(idx .. ': ' .. player_color, Color[player_color])
+    end
+
+end
