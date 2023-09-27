@@ -1,4 +1,42 @@
-function displayScores()
+function broadcastWinners(winners)
+    --[[
+        Broadcast the Players' scores and declare the winner(s).
+
+        Parameters
+        ----------
+        winners : table
+            An array containing the Player color(s) of the winner(s).
+
+    ]]
+    for player_color, tbl in pairs(PlayerScores) do
+        broadcastToAll(
+            player_color .. ': ' .. tbl.total .. ' points',
+            Color[player_color]
+        )
+    end
+
+    local msg = ''
+    if #winners == 1 then
+        msg = msg .. winners[1] .. ' is the winner with '
+            .. PlayerScores[winners[1]].total .. ' points!'
+    elseif #winners == 2 then
+        msg = msg .. winners[1] .. ' and ' .. winners[2]
+            .. ' share the victory with '
+            .. PlayerScores[winners[1]].total .. ' points!'
+    else
+        for i = 1, #winners - 1 do
+            msg = msg .. winners[i] .. ', '
+        end
+        msg = msg .. ' and ' .. winners[#winners]
+            .. ' share the victory with '
+            .. PlayerScores[winners[1]].total .. ' points!'
+    end
+
+    broadcastToAll(msg, log_message_color)
+
+end
+
+function printScoreDetails()
     --[[
         Display an overview of each Player's score.
 
