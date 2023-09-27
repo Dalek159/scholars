@@ -10,11 +10,19 @@ function scoreGame()
         createScoringZones(2 * x_offset, 5.1, 2 * z_offset)
         drawScoringZoneBoundaries(x_offset, y_offset, z_offset)
         createGuildMembershipZones()
-
+        createEmployedTranslatorZone()
 
         broadcastToAll(
-            'Placeholder for message telling players what to do '
-            .. 'before the game can be scored.',
+            'Read the console message before pressing the '
+            .. '"Score Game" button again.',
+            log_message_color
+        )
+        printToAll(
+            '\n\nEach Player should ensure that all of the items in their '
+            .. 'play area are inside their colored rectangle. Additionally, '
+            .. 'make sure that Retired Translators and Translated Scroll '
+            .. 'Cards are not stacked (i.e. decks), or they will not '
+            .. 'be scored.',
             log_message_color
         )
         return 0
@@ -62,11 +70,40 @@ function scoreGame()
         end
     end
 
-    function assignComponents()
+    function determineEndState()
+        --[[
+            Determine the ending game state for each Player.
+
+            A Player's ending game state consists of
+                * Silver
+                * Gold
+                * Workers
+                * Employed Translators (those still in Rooms on the main board)
+                * Translated Scrolls
+                * Counts of the number of scrolls translated of a given language
+                * Levels on the various Research Tracks
+                * Amounts of Dice
+                * Membership in the various Guilds of the House of Wisdom
+
+            A Player's end game state is stored in the table PlayerEndState.
+            This is indexed by the Player's color, then the category to be
+            considered; this will return a table.
+
+        ]]
         for i, player_color in ipairs(getSeatedPlayers()) do
-            -- Assume Players have no Silver or Gold to start
+            --[[
+                Assume Players have none of the following items to start
+                * Silver
+                * Gold
+                * Workers
+                * Employed Translators
+                * Retired Translators
+                * Translated Scrolls
+            ]]
             PlayerEndState[player_color].Silver.num = 0
             PlayerEndState[player_color].Gold.num = 0
+            PlayerEndState[player_color].Workers.num = 0
+            PlayerEndState[player_color].employed_translators.num = 0
             -- Assume Players have translated no scrolls
             languages = {
                 'Chinese',
@@ -116,6 +153,9 @@ function scoreGame()
                     PlayerEndState[player_color]['Translated Scrolls'][
                         ScrollCards[obj.getGUID()].language
                     ] = lang_total + 1
+                elseif obj.getGMNotes() == 'Worker' then
+                    local tally = PlayerEndState[player_color].Workers.num
+                    PlayerEndState[player_color].Workers.num = tally + 1
                 end
             end
 
@@ -181,6 +221,17 @@ function scoreGame()
             end
         end
 
+        -- Determine how many Employed Translators a Player has
+        for _, obj in ipairs(EmployedTranslatorZone.getObjects()) do
+            if obj.hasTag('Influence') then
+                PlayerEndState[
+                    obj.getGMNotes()
+                ].employed_translators.num = PlayerEndState[
+                    obj.getGMNotes()
+                ].employed_translators.num + 1
+            end
+        end
+
     end
 
     scoring_categories = {
@@ -207,7 +258,9 @@ function scoreGame()
         'Silver',
         'Gold',
         'retired_translators',
+        'employed_translators',
         'research_tracks',
+        'Workers',
         'White Die',
         'Red Die',
         'Blue Die',
@@ -227,7 +280,7 @@ function scoreGame()
         end
     end
 
-    assignComponents()
+    determineEndState()
     scoreRetiredTranslators()
     scoreGuildControl()
     scoreCaliphCards()
@@ -235,6 +288,27 @@ function scoreGame()
     scoreDiceSum()
     scoreScrollCards()
 
+    local winners = determineWinner()
+    printScoreDetails()
+    broadcastWinners(winners)
+
+end
+
+function determineWinner()
+    --[[
+        Tally the Players' totals and determine the game's winner.
+
+        In determining the winner, the tie breakers are considered:
+            * First Tie Breaker: Player with the most Employed Translators
+            * Second Tie Breaker: Player with the most Workers remaining
+            * If still tied, all tied Players share the victory
+
+        Returns
+        -------
+        table
+            An array containing the Player color(s) of the winner(s).
+
+    ]]
     -- Add up the Players' totals
     for _, player_color in ipairs(getSeatedPlayers()) do
         for category, cat_table in pairs(PlayerScores[player_color]) do
@@ -245,15 +319,43 @@ function scoreGame()
         end
     end
 
-    -- for _, player_color in ipairs(getSeatedPlayers()) do
-    --     if player_color == 'Purple' then
-    --         print("List of all the things in Purple's scoring zone.")
-    --         for _, obj in ipairs(PlayerComponents['Purple'].scoring_zone.getObjects()) do
-    --             print('        ' .. obj.getName())
-    --         end
-    --     end
-    -- end
+    -- Build an integer-indexed table for the Players' scores
+    -- that can be sorted
+    local sortable_table = {}
+    for _, player_color in ipairs(getSeatedPlayers()) do
+        table.insert(
+            sortable_table,
+            {
+                player_color = player_color,
+                total = PlayerScores[player_color].total,
+                employed_translators = PlayerEndState[player_color].employed_translators.num,
+                workers = PlayerEndState[player_color].Workers.num,
+            }
+        )
+    end
+    sortDescending(sortable_table, {'total', 'employed_translators', 'workers'})
 
-    displayScores()
+    -- Now we have to deal with ties
+    -- First Tie Breaker: Player with the most Employed Translators
+    -- Second Tie Breaker: Player with the most Workers remaining
+    -- If still tied, all tied Players share the victory
+    local winners = {sortable_table[1].player_color}
+    for j = 2, # getSeatedPlayers() do
+        if sortable_table[j].total == sortable_table[1].total then
+            if sortable_table[j].employed_translators == sortable_table[1].employed_translators then
+                if sortable_table[j].workers == sortable_table[1].workers then
+                    table.insert(winners, sortable_table[j].player_color)
+                else
+                    break
+                end
+            else
+                break
+            end
+        else
+            break
+        end
+    end
+
+    return winners
 
 end
