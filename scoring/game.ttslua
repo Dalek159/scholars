@@ -62,12 +62,18 @@ function scoreGame()
         for _, zone_tbl in ipairs(DiceSumZones) do
             for _, obj in ipairs(zone_tbl.zone.getObjects()) do
                 if obj.hasTag('Influence') then
-                    PlayerComponents[
-                        obj.getGMNotes()
-                    ].influence_bag.putObject(obj)
+                    local player_color = obj.getGMNotes()
+                    if player_color ~= '' then
+                        PlayerComponents[
+                            player_color
+                        ].influence_bag.putObject(obj)
+                    else
+                        OpponentInfluence.putObject(obj)
+                    end
                 end
             end
         end
+
     end
 
     function determineEndState()
@@ -209,8 +215,11 @@ function scoreGame()
             end
             for _, obj in pairs(guild_tbl.membership_zone.getObjects()) do
                 if obj.hasTag('Influence') then
-                    local tally = guild_membership[obj.getGMNotes()]
-                    guild_membership[obj.getGMNotes()] = tally + 1
+                    local player_color = obj.getGMNotes()
+                    if player_color ~= '' then
+                        local tally = guild_membership[player_color]
+                        guild_membership[player_color] = tally + 1
+                    end
                 end
             end
 
@@ -224,11 +233,47 @@ function scoreGame()
         -- Determine how many Employed Translators a Player has
         for _, obj in ipairs(EmployedTranslatorZone.getObjects()) do
             if obj.hasTag('Influence') then
-                PlayerEndState[
-                    obj.getGMNotes()
-                ].employed_translators.num = PlayerEndState[
-                    obj.getGMNotes()
-                ].employed_translators.num + 1
+                local player_color = obj.getGMNotes()
+                if player_color ~= '' then
+                    PlayerEndState[
+                        player_color
+                    ].employed_translators.num = PlayerEndState[
+                        player_color
+                    ].employed_translators.num + 1
+                end
+            end
+        end
+
+    end
+
+    function determineOpponentState()
+
+        opponentDiceSumTrack = {
+            Vector(-2.94, 0, 0), -- -6 slot
+            Vector(-2.44, 0, 0), -- -5 slot
+            Vector(-1.95, 0, 0), -- -4 slot
+            Vector(-1.45, 0, 0), -- -3 slot
+            Vector(-0.97, 0, 0), -- -2 slot
+            Vector(-0.48, 0, 0), -- -1 slot
+            Vector(0, 0, 0), -- 0 slot
+            Vector(0.51, 0, 0), -- 1 slot
+            Vector(0.98, 0, 0), -- 2 slot
+            Vector(1.48, 0, 0), -- 3 slot
+            Vector(1.97, 0, 0), -- 4 slot
+            Vector(2.46, 0, 0), -- 5 slot
+            Vector(2.96, 0, 0), -- 6 slot
+        }
+        OpponentEndState = {
+            dice_sum = nil
+        }
+        for idx, offset in ipairs(opponentDiceSumTrack) do
+            if isClose(
+                diceSumTracker.getPosition().x,
+                (SoloBoard.getPosition() + offset).x
+            ) then
+                -- Tables start at 1, and we need the start to be -6
+                OpponentEndState.dice_sum = idx - 7
+                break
             end
         end
 
@@ -280,6 +325,17 @@ function scoreGame()
         end
     end
 
+    if soloMode then
+        determineOpponentState()
+        OpponentScore = {
+            total = 0,
+            dice_sum = {
+                total = 0,
+                itemized = {},
+            }
+        }
+    end
+
     determineEndState()
     scoreRetiredTranslators()
     scoreGuildControl()
@@ -318,6 +374,13 @@ function determineWinner()
             end
         end
     end
+    if soloMode then
+        for category, cat_table in pairs(OpponentScore) do
+            if category ~= 'total' then
+                OpponentScore.total = OpponentScore.total + cat_table.total
+            end
+        end
+    end
 
     -- Build an integer-indexed table for the Players' scores
     -- that can be sorted
@@ -330,6 +393,17 @@ function determineWinner()
                 total = PlayerScores[player_color].total,
                 employed_translators = PlayerEndState[player_color].employed_translators.num,
                 workers = PlayerEndState[player_color].Workers.num,
+            }
+        )
+    end
+    if soloMode then
+        table.insert(
+            sortable_table,
+            {
+                player_color = 'Opponent',
+                total = OpponentScore.total,
+                employed_translators = 11, -- so it always wins the tie
+                workers = 0,
             }
         )
     end

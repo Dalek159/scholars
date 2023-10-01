@@ -9,17 +9,19 @@ function scoreGuildControl()
             local obj = getObjectFromGUID(obj_tbl.guid)
             if obj.hasTag('Influence') then
                 local player_color = obj.getGMNotes()
-                local total = PlayerScores[
-                    player_color
-                ].guild_control.total
-                total = total + guild_tbl.points
-                PlayerScores[player_color].guild_control.total = total
+                if player_color ~= '' then
+                    local total = PlayerScores[
+                        player_color
+                    ].guild_control.total
+                    total = total + guild_tbl.points
+                    PlayerScores[player_color].guild_control.total = total
 
-                PlayerScores[
-                    player_color
-                ].guild_control.itemized[guild] = guild_tbl.points
+                    PlayerScores[
+                        player_color
+                    ].guild_control.itemized[guild] = guild_tbl.points
 
-                break
+                    break
+                end
             end
         end
     end
