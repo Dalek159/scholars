@@ -15,6 +15,7 @@ function onLoad()
         ['Red Influence'] = Global.getTable('PlayerComponents')['Red'].influence_bag,
         ['Teal Influence'] = Global.getTable('PlayerComponents')['Teal'].influence_bag,
         ['Yellow Influence'] = Global.getTable('PlayerComponents')['Yellow'].influence_bag,
+        ['Opponent Influence'] = Global.getVar('OpponentInfluence'),
     }
 end
 
