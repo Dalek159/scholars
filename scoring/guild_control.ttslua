@@ -5,23 +5,28 @@ function scoreGuildControl()
 
     ]]
     for guild, guild_tbl in pairs(HouseOfWisdom) do
-        for _, obj_tbl in ipairs(guild_tbl.control_zone.getObjects()) do
-            local obj = getObjectFromGUID(obj_tbl.guid)
+        for _, obj in ipairs(guild_tbl.control_zone.getObjects()) do
             if obj.hasTag('Influence') then
                 local player_color = obj.getGMNotes()
-                if player_color ~= '' then
-                    local total = PlayerScores[
-                        player_color
-                    ].guild_control.total
+                local total = 0
+                if player_color ~= opponent.name then
+                    total = PlayerScores[player_color].guild_control.total
                     total = total + guild_tbl.points
                     PlayerScores[player_color].guild_control.total = total
 
                     PlayerScores[
                         player_color
                     ].guild_control.itemized[guild] = guild_tbl.points
+                else
+                    total = OpponentScore.guild_control.total
+                    total = total + guild_tbl.points
+                    OpponentScore.guild_control.total = total
 
-                    break
+                    OpponentScore.guild_control.itemized[
+                        guild
+                    ] = guild_tbl.points
                 end
+                break
             end
         end
     end

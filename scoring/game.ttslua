@@ -63,12 +63,12 @@ function scoreGame()
             for _, obj in ipairs(zone_tbl.zone.getObjects()) do
                 if obj.hasTag('Influence') then
                     local player_color = obj.getGMNotes()
-                    if player_color ~= '' then
+                    if player_color ~= opponent.name then
                         PlayerComponents[
                             player_color
                         ].influence_bag.putObject(obj)
                     else
-                        OpponentInfluence.putObject(obj)
+                        opponent.influence_bag.putObject(obj)
                     end
                 end
             end
@@ -216,7 +216,7 @@ function scoreGame()
             for _, obj in pairs(guild_tbl.membership_zone.getObjects()) do
                 if obj.hasTag('Influence') then
                     local player_color = obj.getGMNotes()
-                    if player_color ~= '' then
+                    if player_color ~= opponent.name then
                         local tally = guild_membership[player_color]
                         guild_membership[player_color] = tally + 1
                     end
@@ -234,7 +234,7 @@ function scoreGame()
         for _, obj in ipairs(EmployedTranslatorZone.getObjects()) do
             if obj.hasTag('Influence') then
                 local player_color = obj.getGMNotes()
-                if player_color ~= '' then
+                if player_color ~= opponent.name then
                     PlayerEndState[
                         player_color
                     ].employed_translators.num = PlayerEndState[
@@ -330,6 +330,14 @@ function scoreGame()
         OpponentScore = {
             total = 0,
             dice_sum = {
+                total = 0,
+                itemized = {},
+            },
+            guild_control = {
+                total = 0,
+                itemized = {},
+            },
+            caliph_cards = {
                 total = 0,
                 itemized = {},
             }
