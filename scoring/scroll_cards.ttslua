@@ -28,4 +28,30 @@ function scoreScrollCards()
         PlayerScores[player_color].scroll_cards.total = total
     end
 
+    if soloMode then
+        OpponentScore.scroll_cards.itemized['Chinese'] = OpponentEndState[
+            'Translated Scrolls']['Chinese'] * 7
+        OpponentScore.scroll_cards.itemized['Sanskrit'] = OpponentEndState[
+            'Translated Scrolls']['Sanskrit'
+        ] * math.floor(#OpponentEndState.retired_translators/2)
+        OpponentScore.scroll_cards.itemized['Greek'] = OpponentEndState[
+            'Translated Scrolls']['Greek'
+        ] * OpponentEndState['Translated Scrolls'].total
+        OpponentScore.scroll_cards.itemized['Hebrew'] = OpponentEndState[
+            'Translated Scrolls']['Hebrew'
+        ] * OpponentEndState.research_markers
+        OpponentScore.scroll_cards.itemized['Persian'] = OpponentEndState[
+            'Translated Scrolls']['Persian'
+        ] * OpponentEndState.employed_translators
+        OpponentScore.scroll_cards.itemized['Syriac'] = OpponentEndState[
+            'Translated Scrolls']['Syriac'
+        ] * math.floor(OpponentEndState['Guild Membership']/2)
+
+        for _, language in ipairs(languages) do
+            local total = OpponentScore.scroll_cards.total
+            local lang_total = OpponentScore.scroll_cards.itemized[language]
+            OpponentScore.scroll_cards.total = total + lang_total
+        end
+    end
+
 end
