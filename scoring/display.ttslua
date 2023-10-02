@@ -16,15 +16,15 @@ function broadcastWinners(winners)
     end
     if soloMode then
         broadcastToAll(
-            'Opponent: ' .. OpponentScore.total .. ' points',
-            Color.Orange
+            opponent.name .. ': ' .. OpponentScore.total .. ' points',
+            opponent.color
         )
     end
 
     local msg = ''
     if #winners == 1 then
         msg = msg .. winners[1] .. ' is the winner with '
-        if winners[1] ~= 'Opponent' then
+        if winners[1] ~= opponent.name then
             msg = msg .. PlayerScores[winners[1]].total .. ' points!'
         else
             msg = msg .. OpponentScore.total .. ' points!'
@@ -89,8 +89,9 @@ function printScoreDetails()
 
     if soloMode then
         printToAll(
-            '********** Opponent (' .. OpponentScore.total .. ') **********',
-            Color.Orange
+            '********** ' .. opponent.name .. ' ('
+            .. OpponentScore.total .. ') **********',
+            opponent.color
         )
         for category, cat_tbl in pairs(OpponentScore) do
             if category ~= 'total' then
@@ -109,7 +110,7 @@ function printScoreDetails()
 
         printToAll(
             '**************************',
-            Color.Orange
+            opponent.color
         )
 
     end

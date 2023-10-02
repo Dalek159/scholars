@@ -71,7 +71,7 @@ function scoreDiceSum()
         if tbl.player ~= 'Opponent' then
             influence_bag = PlayerComponents[tbl.player].influence_bag
         else
-            influence_bag = OpponentInfluence
+            influence_bag = opponent.influence_bag
         end
         influence_bag.takeObject({
             position = DiceSumZones[zone_idx].zone.getPosition() + Vector(
