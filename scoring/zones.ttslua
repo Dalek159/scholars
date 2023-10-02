@@ -232,3 +232,19 @@ function createEmployedTranslatorZone()
         scale = Vector(38.00, 0.50, 0.50),
     })
 end
+
+function createSoloResearchZone()
+    --[[
+        Create a zone for counting the number of markers the Opponent has.
+
+        Create a zone for determining how many Research Markers the
+        Opponent accumulated during the game.
+
+    ]]
+    opponent.research_zone = spawnObject({
+        type = 'ScriptingTrigger',
+        position = opponent.board.getPosition() + Vector(0, 0.35, 1.43),
+        scale = Vector(4.6, 0.5, 1.0),
+    })
+
+end
