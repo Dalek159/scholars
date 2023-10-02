@@ -30,4 +30,21 @@ function scoreRetiredTranslators()
         end
     end
 
+    if soloMode then
+        local sum = 0
+        for _, obj in ipairs(OpponentEndState.retired_translators) do
+            local points = 0
+            if EmployableTranslators[obj.getGUID()] then
+                points = EmployableTranslators[obj.getGUID()].points
+            else
+                points = StartingTranslators[obj.getGUID()].points
+            end
+            sum = sum + points
+            OpponentScore.retired_translators.itemized[
+                obj.getName()
+            ] = points
+        end
+        OpponentScore.retired_translators.total = sum
+    end
+
 end

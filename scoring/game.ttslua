@@ -264,16 +264,26 @@ function scoreGame()
             Vector(2.96, 0, 0), -- 6 slot
         }
         OpponentEndState = {
-            dice_sum = nil
+            dice_sum = nil,
+            retired_translators = {}
         }
         for idx, offset in ipairs(opponentDiceSumTrack) do
             if isClose(
                 diceSumTracker.getPosition().x,
-                (SoloBoard.getPosition() + offset).x
+                (opponent.board.getPosition() + offset).x
             ) then
                 -- Tables start at 1, and we need the start to be -6
                 OpponentEndState.dice_sum = idx - 7
                 break
+            end
+        end
+
+        for _, obj in ipairs(opponent.scoring_zone.getObjects()) do
+            if obj.hasTag('Translator') then
+                table.insert(
+                    OpponentEndState.retired_translators,
+                    obj
+                )
             end
         end
 
@@ -338,6 +348,10 @@ function scoreGame()
                 itemized = {},
             },
             caliph_cards = {
+                total = 0,
+                itemized = {},
+            },
+            retired_translators = {
                 total = 0,
                 itemized = {},
             }
