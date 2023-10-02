@@ -11,6 +11,9 @@ function scoreGame()
         drawScoringZoneBoundaries(x_offset, y_offset, z_offset)
         createGuildMembershipZones()
         createEmployedTranslatorZone()
+        if soloMode then
+            createSoloResearchZone()
+        end
 
         broadcastToAll(
             'Read the console message before pressing the '
@@ -111,14 +114,6 @@ function scoreGame()
             PlayerEndState[player_color].Workers.num = 0
             PlayerEndState[player_color].employed_translators.num = 0
             -- Assume Players have translated no scrolls
-            languages = {
-                'Chinese',
-                'Sanskrit',
-                'Greek',
-                'Hebrew',
-                'Persian',
-                'Syriac'
-            }
             for _, language in ipairs(languages) do
                 PlayerEndState[player_color]['Translated Scrolls'][language] = 0
             end
@@ -264,8 +259,12 @@ function scoreGame()
             Vector(2.96, 0, 0), -- 6 slot
         }
         OpponentEndState = {
-            dice_sum = nil,
-            retired_translators = {}
+            ['dice_sum'] = nil,
+            ['employed_translators'] = 0,
+            ['retired_translators'] = {},
+            ['research_markers'] = 0,
+            ['Translated Scrolls'] = {},
+            ['Guild Membership'] = 0,
         }
         for idx, offset in ipairs(opponentDiceSumTrack) do
             if isClose(
@@ -278,14 +277,69 @@ function scoreGame()
             end
         end
 
+        -- Assume the Opponent has translated no scrolls
+        for _, language in ipairs(languages) do
+            OpponentEndState['Translated Scrolls'][language] = 0
+        end
+        OpponentEndState['Translated Scrolls'].total = 0
+
         for _, obj in ipairs(opponent.scoring_zone.getObjects()) do
             if obj.hasTag('Translator') then
                 table.insert(
                     OpponentEndState.retired_translators,
                     obj
                 )
+            elseif obj.hasTag('Scroll') then
+                -- -- Add to the list of scrolls the Player has
+                -- table.insert(OpponentEndState.scroll_cards, obj)
+                -- Add 1 to the language total
+                local lang_total = OpponentEndState['Translated Scrolls'][
+                    ScrollCards[obj.getGUID()].language
+                ]
+                OpponentEndState['Translated Scrolls'][
+                    ScrollCards[obj.getGUID()].language
+                ] = lang_total + 1
+                -- Add 1 to the total of all Translated Scrolls
+                OpponentEndState[
+                    'Translated Scrolls'
+                ].total = OpponentEndState['Translated Scrolls'].total + 1
             end
         end
+
+        -- Determine the number of Research Markers the Opponent
+        -- managed to collect on their board
+        for _, obj in ipairs(opponent.research_zone.getObjects()) do
+            if obj.hasTag('Flag') then
+                local total = OpponentEndState.research_markers
+                OpponentEndState.research_markers = total + 1
+            end
+        end
+
+        -- Determine the amount of the Opponent's Guild Membership
+        for guild, guild_tbl in pairs(HouseOfWisdom) do
+            for _, obj in pairs(guild_tbl.membership_zone.getObjects()) do
+                if obj.hasTag('Influence') then
+                    if obj.getGMNotes() == opponent.name then
+                        local tally = OpponentEndState['Guild Membership']
+                        OpponentEndState['Guild Membership'] = tally + 1
+                    end
+                end
+            end
+        end
+
+        -- Determine the number of Employed Neutral Translators
+        -- PlayerEndState[player_color].employed_translators.num
+        for _, obj in ipairs(EmployedTranslatorZone.getObjects()) do
+            if obj.hasTag('Translator') then
+                local tally = OpponentEndState.employed_translators
+                OpponentEndState.employed_translators = tally + 1
+            end
+        end
+        -- Use the previously calculated number of Employed Player
+        -- Translators to get the number of Employed Neutral Translators
+        OpponentEndState.employed_translators = OpponentEndState[
+            'employed_translators'
+        ] - PlayerEndState[Turns.turn_color].employed_translators.num
 
     end
 
@@ -335,30 +389,21 @@ function scoreGame()
         end
     end
 
+    determineEndState()
     if soloMode then
         determineOpponentState()
-        OpponentScore = {
-            total = 0,
-            dice_sum = {
-                total = 0,
-                itemized = {},
-            },
-            guild_control = {
-                total = 0,
-                itemized = {},
-            },
-            caliph_cards = {
-                total = 0,
-                itemized = {},
-            },
-            retired_translators = {
-                total = 0,
-                itemized = {},
-            }
-        }
+
+        OpponentScore = {}
+        for _, category in ipairs(scoring_categories) do
+            if category ~= 'research_tracks' then
+                OpponentScore[category] = {}
+                OpponentScore[category].total = 0
+                OpponentScore[category].itemized = {}
+            end
+        end
+        OpponentScore.total = 0
     end
 
-    determineEndState()
     scoreRetiredTranslators()
     scoreGuildControl()
     scoreCaliphCards()
