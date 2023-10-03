@@ -1,3 +1,5 @@
+require("scholars/translators/main")
+
 function scoreRetiredTranslators()
     --[[
         Determine the points a Player scores from their

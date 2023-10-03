@@ -1,5 +1,15 @@
--- GUID: a7f397
--- The "table" is actually a custom tile
+--[[
+Information with regard to the custom tile that serves as the Table in the mod.
+
+* GUID: a7f397
+* type: custom tile
+
+]]
+
 function onLoad()
+    --[[
+    Set the custom tile serving as the table to be non-interactable.
+
+    ]]
     self.interactable = false
 end

@@ -1,0 +1,19 @@
+function Multiplayer()
+    ButtonToken.clearButtons()
+    soloMode = false
+
+    for i=1, 4 do
+        if Player[PlayerTable[i]].seated == false then
+            for _, obj in ipairs(getAllObjects()) do
+                if obj.getGMNotes() == PlayerTable[i] then
+                    obj.destruct()
+                end
+            end
+        end
+    end
+
+    opponent.influence_bag.destruct()
+    PlayerCount = #getSeatedPlayers()
+    CasualOrEpicDialogue()
+
+end

@@ -1,0 +1,51 @@
+--[[
+Module defines all bags used by the mod
+
+Note that since this module calls upon getObjectFromGUID, it must be
+required from inside a function (such as onLoad).
+
+]]
+
+-- Workers
+WhiteWorkerBag = getObjectFromGUID('1d05ef')
+BlueWorkerBag = getObjectFromGUID('64f621')
+YellowWorkerBag = getObjectFromGUID('5ff1b3')
+RedWorkerBag = getObjectFromGUID('44a881')
+-- Resources
+SilverBag = getObjectFromGUID('68fb8d')
+GoldBag = getObjectFromGUID('0420b0')
+-- Dice
+WhiteDiceBag = getObjectFromGUID('dd0572')
+RedDiceBag = getObjectFromGUID('a61b2e')
+BlueDiceBag = getObjectFromGUID('6ccdaa')
+YellowDiceBag = getObjectFromGUID('51062a')
+PurpleDiceBag = getObjectFromGUID('f404eb')
+OrangeDiceBag = getObjectFromGUID('403f93')
+GreenDiceBag = getObjectFromGUID('2e2d03')
+
+BagMapping = {
+    white_die = WhiteDiceBag,
+    red_die = RedDiceBag,
+    blue_die = BlueDiceBag,
+    yellow_die = YellowDiceBag,
+    gold = GoldBag,
+    silver = SilverBag,
+    white_worker = WhiteWorkerBag,
+    red_worker = RedWorkerBag,
+    blue_worker = BlueWorkerBag,
+    yellow_worker = YellowWorkerBag,
+}
+
+ResourceCardBag = getObjectFromGUID('36acca')
+GoalCardBag = getObjectFromGUID('5d23cd')
+CaliphBag = getObjectFromGUID('77e64e')
+StartingTranslatorBag = getObjectFromGUID('195b20')
+SoloBoardBag = getObjectFromGUID('8ab14f')
+SoloComponentBag = getObjectFromGUID('6b21c8')
+
+ShuffleBags = {
+    getObjectFromGUID('0510e8'),
+    getObjectFromGUID('636fb5'),
+    getObjectFromGUID('025284'),
+    getObjectFromGUID('ae9e58'),
+}

@@ -1,14 +1,14 @@
 function nameTranslators()
     --[[
-        Name the Starting and Employable Translators.
+    Name the Starting and Employable Translators.
 
-        This should only be done to set the values, and
-        then that state saved to serve as the game state.
+    This should only be done to set the values, and
+    then that state saved to serve as the game state.
 
-        If you need to update the card names, then add this
-        back to the end of onLoad.
+    If you need to update the card names, then add this
+    back to the end of onLoad.
+
     ]]
-
     -- Name the Starting Translators
     for _, obj_tbl in ipairs(StartingTranslatorBag.getObjects()) do
         starting_translator = StartingTranslatorBag.takeObject({

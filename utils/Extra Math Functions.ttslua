@@ -1,0 +1,30 @@
+--[[
+Module containing additional useful mathematical functions.
+
+* isClose
+
+]]
+
+function isClose(x, y, tol)
+    --[[
+    Determine if two floats are "close" to each other.
+
+    Parameters
+    ----------
+    x : float
+        The first number to compare.
+    y : float
+        The second number to compare.
+    tol : float
+        The tolerance to use for determining if the two numbers are close.
+
+    Returns
+    -------
+    bool
+        The boolean representation of the determination of the two numbers
+        being close to one another.
+
+    ]]
+    tol = tol or 0.1
+    return math.abs(x - y) <= tol
+end

@@ -1,10 +1,30 @@
+--[[
+Define the Scroll Cards.
+
+Define the Scroll Cards and set their key attributes, such as language,
+base amount of points they are worth once translated, and their bonus
+scoring functions.
+
+]]
+
 bonusScoringStarter = function(params)
     --[[
+    Return the points a Player's Starting Scroll Card awards.
+
+    The Starting Scroll Cards convert every 2 Silver into 1 Gold, and then
+    convert every 2 Gold into 1 Victory Point. If the Player has 6 or
+    more White Die, they lose 3 Victory Points.
 
     Parameters
     ----------
     params : table
         A table containing a single entry, 'player_color'.
+
+    Returns
+    -------
+    int
+        The number of points earned.
+
     ]]
     local silver_total = PlayerEndState[params.player_color].Silver.num
     local gold_total = PlayerEndState[params.player_color].Gold.num
@@ -23,11 +43,21 @@ bonusScoringNone = function(params) return 0 end
 
 bonusScoringWhiteDice = function(params)
     --[[
+    Return the points a Player's number of White Dice awards.
+
+    For such Scroll Cards, the scoring is as follows:
+    * 1 - 3 White Dice = 2 VP
+    * 0 White Die = 4 VP
 
     Parameters
     ----------
     params : table
         A table containing a single entry, 'player_color'.
+
+    Returns
+    -------
+    int
+        The number of points earned.
     ]]
     if PlayerEndState[params.player_color]['White Die'].num == 0 then
         return 4
@@ -39,6 +69,27 @@ bonusScoringWhiteDice = function(params)
 end
 
 bonusScoringOtherLanguages = function(params)
+    --[[
+    Return the points a Player's applicable Translated Scroll Cards award.
+
+    Define the bonus scoring function for Scroll Cards concerned with the
+    number of Scroll Cards of certain languages that have been translated.
+    For each applicable language, each Translated Scroll Card is worth 1 VP.
+
+    Parameters
+    ----------
+    params : table
+        A table containing a two entries: player_color and languages.
+        player_color is the name of the Player that translated the Scroll Card.
+        languages is an array of any applicable languages that should
+        contribute towards the bonus scoring.
+
+    Returns
+    -------
+    int
+        The number of points earned.
+
+    ]]
     local total = 0
     for _, language in ipairs(params.languages) do
         total = total + PlayerEndState[
@@ -50,11 +101,22 @@ end
 
 bonusScoringRetiredTranslators = function(params)
     --[[
+    Return the points a Player's number of Retired Translator awards.
+
+    For such Scroll Cards, the scoring is as follows:
+    * 4 - 6 Retired Translators = 2 VP
+    * 7 Retired Translators = 4 VP
 
     Parameters
     ----------
     params : table
         A table containing a single entry, 'player_color'.
+
+    Returns
+    -------
+    int
+        The number of points earned.
+
     ]]
     -- PlayerEndState[params.player_color].retired_translators is an
     -- integer-indexed table containing the Player's Retired Translators
@@ -85,7 +147,7 @@ bonusScoringGuildMembership = function(params)
     Returns
     -------
     int
-        The number of points a Player's membership in the Guild awards.
+        The number of points earned.
 
     ]]
     local guild_membership = PlayerEndState[params.player_color][
@@ -102,11 +164,18 @@ end
 
 bonusScoringResearchTrack = function(params)
     --[[
+    Return the points a Player's Level on the specified Research Track awards.
 
     Parameters
     ----------
     params : table
-        A table containing 2 keys: "player_color" and "research_track"
+        A table containing 2 keys: "player_color" and "research_track".
+
+    Returns
+    -------
+    int
+        The number of points earned.
+
     ]]
     -- This is a string; e.g. "Level 4"
     local research_level = PlayerEndState[
@@ -138,7 +207,7 @@ bonusScoringBreadthOfResearch = function(params)
     Returns
     -------
     int
-        The points a Player scores based on the breadth of their Research.
+        The number of points earned.
 
     ]]
     local breadth_num = 0
@@ -153,6 +222,26 @@ bonusScoringBreadthOfResearch = function(params)
 end
 
 bonusScoringColoredDice = function(params)
+    --[[
+    Return the points a Player's Colored Dice award.
+
+    A Player will receive one VP per the specified Secondary Die, and
+    they will receive 2 VP if they have 4 or more of the specified
+    Primary Die.
+
+    Parameters
+    ----------
+    params : table
+        A table containing 3 keys: "player_color", "secondary_die", and
+        "primary_die". The values for the die key should be given as
+        'Color Die'; e.g. 'Blue Die'.
+
+    Returns
+    -------
+    int
+        The number of points earned.
+
+    ]]
     local total = PlayerEndState[params.player_color][params.secondary_die].num
     if PlayerEndState[params.player_color][params.primary_die].num >= 4 then
         total = total + 2
@@ -161,7 +250,14 @@ bonusScoringColoredDice = function(params)
     return total
 end
 
-
+--[[
+Each Scroll Card has the following attributes:
+* name
+* language
+* base_points
+* bonus_points
+* bonus_params
+]]
 ScrollCards = {
     -- Starting Scrolls
     ['644ada'] = {

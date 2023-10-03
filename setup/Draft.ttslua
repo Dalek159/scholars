@@ -18,3 +18,196 @@ function setDraftOrder()
     end
 
 end
+
+function SetUpDraft()
+    --[[
+        Put out the 4 Starting Translator / Resource Card
+        pairs for players to draft from.
+    ]]
+    draftFinished = false
+    local resource_card_offset = Vector(0, 0, -5.2)
+    local draft_button_offset = Vector(0, 0, 2.5)
+    draftPool = {
+        resource_cards = {},
+        employed_translators = {},
+    }
+
+    for i=1, 4 do
+        local SelectedCard = StartingTranslatorBag.takeObject()
+        local room = StartingTranslators[SelectedCard.getGUID()].room
+        SelectedCard.setPosition(room)
+        SelectedCard.setRotation(Vector(0, 180, 0))
+
+        local ResourceCard = ResourceCardBag.takeObject({
+            position = room + resource_card_offset,
+            rotation = Vector(0, 180, 0),
+        })
+        draftPool.resource_cards[i] = ResourceCard
+        draftPool.employed_translators[i] = SelectedCard
+
+        Wait.time(
+            function ()
+                ResourceCard.createButton({
+                    click_function = 'draftResourceCard',
+                    function_owner = self,
+                    label          = 'Draft',
+                    position       = draft_button_offset,
+                    width          = 1200,
+                    height         = 400,
+                    font_size      = 256,
+                    color          = Color.Black,
+                    font_color     = Color.White,
+                    press_color    = Color.Green,
+                })
+            end,
+            3
+        )
+    end
+
+end
+
+function draftResourceCard(card, player_color, alt_click)
+
+    starting_resources = ResourceCards[card.getGUID()]
+    for idx, obj in ipairs(draftPool.resource_cards) do
+        if obj.getGUID() == card.getGUID() then
+            table.remove(draftPool.resource_cards, idx)
+            table.remove(draftPool.employed_translators, idx)
+            break
+        end
+    end
+    local player_dice_bag = PlayerComponents[player_color].dice_bag
+    local player_board = PlayerComponents[player_color].board
+    local player_influence_bag = PlayerComponents[player_color].influence_bag
+
+
+    local types_of_die = {'white_die', 'red_die', 'blue_die', 'yellow_die'}
+    for _, die_color in ipairs(types_of_die) do
+        local dice_supply = BagMapping[die_color]
+        for i = 1, starting_resources[die_color] do
+            player_dice_bag.putObject(dice_supply.takeObject())
+        end
+    end
+
+    local types_of_resources = {'gold', 'silver'}
+    for idx, resource_type in ipairs(types_of_resources) do
+        for i = 1, starting_resources[resource_type] do
+            BagMapping[resource_type].takeObject({
+                position = player_board.getPosition() + Vector(-9 + 2 * idx, 0, 3 + i)
+            })
+        end
+    end
+
+    local types_of_workers = {
+        'white_worker',
+        'red_worker',
+        'blue_worker',
+        'yellow_worker'
+    }
+    for idx, worker_type in ipairs(types_of_workers) do
+        for i = 1, starting_resources[worker_type] do
+            BagMapping[worker_type].takeObject({
+                position = player_board.getPosition() + Vector(-3, 0, 3 + idx)
+            })
+        end
+    end
+
+    local research_bump = Vector(0, 0, 0.9)
+    if starting_resources.research then
+        local marker = PlayerComponents[player_color].research_markers[
+            starting_resources.research
+        ]
+        marker.setPositionSmooth(marker.getPosition() + research_bump)
+    end
+
+    if starting_resources.scroll_influence then
+        broadcastToColor(
+            'Please select one Scroll Card to influence',
+            player_color,
+            log_message_color
+        )
+    end
+
+    -- If a card has anything where the user has to make a choice
+    -- about what item to take
+    if starting_resources['miscellaneous'] then
+        broadcastToColor(
+            starting_resources.miscellaneous,
+            player_color,
+            log_message_color
+        )
+    end
+
+    if starting_resources.guild then
+        local control_zone = HouseOfWisdom[
+            starting_resources.guild
+        ].control_zone.getPosition()
+        -- Small offset since Zone positions are from the middle
+        -- and the Influence markers are from the top
+        player_influence_bag.takeObject({
+            position = control_zone + Vector(0, 0, 0.25),
+        })
+    end
+
+    -- Move the Resource Card to the player's board
+    local resource_card_offset = Vector(6.17, 0.11, -0.02)
+    card.flip()
+    card.setLock(true)
+    card.setPositionSmooth(
+        player_board.getPosition() + resource_card_offset,
+        false, -- collide
+        false  -- fast
+    )
+    card.clearButtons()
+
+    -- Draw the player's dice hand
+    Wait.time(
+        function()
+            for i=1, 3 do player_dice_bag.shuffle() end
+            for i = 1, starting_resources.hand do
+                local die_offset = Vector(-10 + 2 * i, 0, -4)
+                player_dice_bag.takeObject({
+                    position = player_board.getPosition() + die_offset,
+                })
+            end
+        end,
+        1
+    )
+
+    -- Handle the Chemistry bump returning a White Die after drawing
+    -- the Player's Hand
+    Wait.time(
+        function()
+            if starting_resources.research == 'Chemistry' then
+                for _, tbl in ipairs(player_dice_bag.getObjects()) do
+                    if tbl.name == 'White Die' then
+                        WhiteDiceBag.putObject(
+                            player_dice_bag.takeObject({guid = tbl.guid})
+                        )
+                        break
+                    end
+                end
+            end
+        end,
+        2
+    )
+
+    -- Mark the associated Translator with the Player's influence
+    local influence_offset = Vector(-1.03, 0.39, 7.26)
+    player_influence_bag.takeObject({
+        position = card.getPosition() + influence_offset,
+    })
+
+    -- Once all Players have drafted a Resource Card,
+    -- delete any remaining cards
+    if #draftPool.resource_cards == 4 - #getSeatedPlayers() then
+        for _, obj in ipairs(draftPool.resource_cards) do
+            obj.destruct()
+        end
+        Turns.order = turnOrder
+        Turns.turn_color = turnOrder[1]
+
+        draftFinished = true
+    end
+
+end

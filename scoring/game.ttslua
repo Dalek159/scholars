@@ -1,3 +1,12 @@
+require("scholars/scoring/zones")
+require("scholars/scoring/retired_translators")
+require("scholars/scoring/guild_control")
+require("scholars/scoring/caliph_cards")
+require("scholars/scoring/research_tracks")
+require("scholars/scoring/dice_sum")
+require("scholars/scoring/scroll_cards")
+require("scholars/scoring/display")
+
 function scoreGame()
 
     if not ScoreGameConfirmed then

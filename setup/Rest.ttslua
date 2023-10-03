@@ -1,0 +1,51 @@
+--[[
+    Supports a Player's interaction with the Scroll Card Draw Pile when Resting.
+
+]]
+function GetDeck()
+    local zoneObjects = DeckZone.getObjects()
+    for _, item in ipairs(zoneObjects) do
+        if item.type == 'Deck' then
+            return item
+        end
+    end
+
+end
+
+
+function CardPresent()
+    local zoneObjects = DeckZone.getObjects()
+    for _, item in ipairs(zoneObjects) do
+        if item.type == 'Card' then
+            return item
+        end
+    end
+
+end
+
+
+function RestCard(obj, player_color, alt_click)
+
+    if GetDeck() then
+        GetDeck().takeObject({
+            top = false,
+            flip = true,
+            position = Vector(-20, 1.30, 5.00)
+        })
+    elseif CardPresent() then
+        CardPresent().flip()
+        CardPresent().setPositionSmooth({-20, 1.30, 5.00})
+        if not ScrollDrawDeckExhausted then
+            ScrollDrawDeckExhausted = true
+            ScrollDeck.setPositionSmooth(DeckZone.getPosition())
+        end
+
+    else
+        broadcastToColor(
+            'All Scroll Cards have been used.',
+            player_color,
+            log_message_color
+        )
+    end
+
+end
