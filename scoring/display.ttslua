@@ -1,11 +1,15 @@
+--[[
+Module dedicated to displaying information related to the scoring of the game.
+
+]]
 function broadcastWinners(winners)
     --[[
-        Broadcast the Players' scores and declare the winner(s).
+    Broadcast the Players' scores and declare the winner(s).
 
-        Parameters
-        ----------
-        winners : table
-            An array containing the Player color(s) of the winner(s).
+    Parameters
+    ----------
+    winners : table
+        An array containing the Player color(s) of the winner(s).
 
     ]]
     for player_color, tbl in pairs(PlayerScores) do
@@ -48,11 +52,11 @@ end
 
 function printScoreDetails()
     --[[
-        Display an overview of each Player's score.
+    Display an overview of each Player's score.
 
-        Display the overall score for each Player, as well
-        as a detailed breakdown of their points from each
-        scoring category.
+    Display the overall score for each Player, as well
+    as a detailed breakdown of their points from each
+    scoring category.
 
     ]]
     printToAll(
@@ -114,4 +118,5 @@ function printScoreDetails()
         )
 
     end
+
 end
