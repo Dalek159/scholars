@@ -1,6 +1,6 @@
 function scoreCaliphCards()
     --[[
-        Determine the points a Player scores from their Caliph Rewards.
+    Determine the points a Player scores from their Caliph Rewards.
 
     ]]
     for choice, choice_tbl in pairs(CaliphCardZones) do
