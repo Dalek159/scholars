@@ -1,5 +1,3 @@
-ButtonToken = getObjectFromGUID('1655e7')
-
 ButtonToken.createButton({
     click_function = 'Multiplayer',
     label = 'Multiplayer',

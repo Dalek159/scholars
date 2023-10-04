@@ -24,6 +24,8 @@ function onLoad()
         'Syriac'
     }
 
+    ButtonToken = getObjectFromGUID('1655e7')
+
     require("scholars/Bags")
     require("scholars/setup/Goal Cards")
     require("scholars/setup/Get Zones")
