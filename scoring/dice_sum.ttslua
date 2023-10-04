@@ -31,7 +31,7 @@ function scoreDiceSum()
         )
 
         PlayerScores[player_color].dice_sum.itemized[
-            'Dice Sum'
+            '# of Colored - # of White'
         ] = num_of_colored_dice - tbl['White Die'].num
         PlayerScores[player_color].dice_sum.itemized[
             'Number of Colored Dice'
@@ -49,7 +49,9 @@ function scoreDiceSum()
                 dice_sum = OpponentEndState.dice_sum,
             }
         )
-        OpponentScore.dice_sum.itemized['Dice Sum'] = OpponentEndState.dice_sum
+        OpponentScore.dice_sum.itemized[
+            'Position on Track'
+        ] = OpponentEndState.dice_sum
     end
 
 
