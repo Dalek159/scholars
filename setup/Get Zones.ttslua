@@ -1,5 +1,5 @@
 --[[
-    Various zones that are in the base state of the mod that are for scoring.
+Various zones that are in the base state of the mod that are used for scoring.
 
 ]]
 HouseOfWisdom = {
