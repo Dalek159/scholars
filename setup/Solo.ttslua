@@ -1,5 +1,13 @@
+--[[
+Module concerned with setting up a Solo game.
+
+]]
+
 function SoloCheck()
-    -- Ensure that a Player is sitting at a viable spot
+    --[[
+        Ensure that only a single Player is seated at a playable hand.
+
+    ]]
     local count = 0
     for i, player_color in ipairs(getSeatedPlayers()) do
         for j, playable_color in ipairs(PlayerTable) do
@@ -20,17 +28,12 @@ function SoloCheck()
         Solo()
     end
 
-    -- -- Ensure that a Player is sitting in the Purple seat
-    -- if Player["Purple"].seated == false then
-    --     broadcastToAll('Please sit in the Purple Seat!', {1,0,0})
-    -- else
-    --     Solo()
-    -- end
 end
 
 function Solo()
     --[[
-        Start the process for setting up the game for a Solo experience
+    Start the process for setting up the game for a Solo experience.
+
     ]]
     ButtonToken.clearButtons()
     PlayerCount = 1
@@ -52,9 +55,9 @@ end
 
 function studentSetup()
     --[[
-        Set up the Student Opponent.
+    Set up the Student Opponent.
 
-        * Dice Sum starts at -2
+    * Dice Sum starts at -2
 
     ]]
     if not draftFinished then
@@ -121,10 +124,11 @@ end
 
 function scribeSetup()
     --[[
-        Set up the Scribe Opponent.
+    Set up the Scribe Opponent.
 
-        * Dice Sum starts at 0.
-        * Starting Scroll Card: Persian
+    * Dice Sum starts at 0.
+    * Starting Scroll Card: Persian
+
     ]]
     if not draftFinished then
         broadcastToAll(
@@ -143,12 +147,12 @@ end
 
 function teacherSetup()
     --[[
-        Set up the Teacher Opponent.
+    Set up the Teacher Opponent.
 
-        * Dice Sum starts at 1.
-        * Starting Scroll Card: Greek
-        * 1 Gold on the left-most Employed Neutral Translator
-        * Influence the Scroll Card in the Purple Guild
+    * Dice Sum starts at 1.
+    * Starting Scroll Card: Greek
+    * 1 Gold on the left-most Employed Neutral Translator
+    * Influence the Scroll Card in the Purple Guild
 
     ]]
     if not draftFinished then
@@ -173,13 +177,13 @@ end
 
 function assignGoldToTranslators(num)
     --[[
-        Assign Gold to the "X" left-most Employed Neutral Translators.
+    Assign Gold to the "X" left-most Employed Neutral Translators.
 
-        Parameters
-        ----------
-        num : int
-            The number of Employed Neutral Translators that should start
-            with a Gold.
+    Parameters
+    ----------
+    num : int
+        The number of Employed Neutral Translators that should start
+        with a Gold.
 
     ]]
 
@@ -208,14 +212,14 @@ end
 
 function scholarSetup()
     --[[
-        Set up the Scholar Opponent.
+    Set up the Scholar Opponent.
 
-        * Dice Sum starts at 3.
-        * Starting Scroll Card: Chinese
-        * 1 Gold on the 2 left-most Employed Neutral Translator
-        * Influence the Scroll Card in the Purple Guild
-        * Influence the Scroll Card in the bottom middle of the Map
-        * Influence the Orange Guild
+    * Dice Sum starts at 3.
+    * Starting Scroll Card: Chinese
+    * 1 Gold on the 2 left-most Employed Neutral Translator
+    * Influence the Scroll Card in the Purple Guild
+    * Influence the Scroll Card in the bottom middle of the Map
+    * Influence the Orange Guild
 
     ]]
     if not draftFinished then
@@ -249,7 +253,12 @@ end
 
 function Solo2()
     --[[
-        Finish the setup for a Solo experience
+    Finish the setup for a Solo experience.
+
+    Create the buttons on the back of the Solo Board for selecting the
+    Opponent's difficulty. Put out the various Solo components (e.g.
+    Scheme Deck, Reference Cards).
+
     ]]
     local y_offset = 0.1
     local z_offset = -0.9 -- neg z is up; pos z is down
