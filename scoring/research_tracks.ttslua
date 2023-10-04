@@ -1,7 +1,6 @@
 function scoreResearchTracks()
     --[[
-        Determine the points a Player scores from their level
-        on each Research Track.
+    Determine the points Players score from their levels on each Research Track.
 
     ]]
     local points_by_level = {
