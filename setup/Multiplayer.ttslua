@@ -1,4 +1,8 @@
 function Multiplayer()
+    --[[
+    Set the game to Multiplayer and ask the Players what game type they want.
+
+    ]]
     ButtonToken.clearButtons()
     soloMode = false
 
