@@ -2,8 +2,7 @@ require("scholars/translators/main")
 
 function scoreRetiredTranslators()
     --[[
-        Determine the points a Player scores from their
-        Retired Translators.
+    Determine the points a Player scores from their Retired Translators.
 
     ]]
     for player_color, categories_tbl in pairs(PlayerEndState) do
