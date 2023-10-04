@@ -1,0 +1,33 @@
+-- Based on the Official Scholars mod by Garphill Games
+-- https://steamcommunity.com/sharedfiles/filedetails/?id=2643607043
+
+-- Scripting Provided by
+-- Steam: rushs777
+-- Discord: dalek_prime
+-- Version 0.7.0
+-- workshop ID: 2946356787
+-- GitHub: https://github.com/Dalek159/scholars
+
+log_message_color = 'Pink'
+
+require("scholars/utils/Extra Math Functions")
+require("scholars/utils/Extra Table Functions")
+
+require("scholars/scrolls/main")
+
+-- Setup modules
+require("scholars/setup/Turn Order")
+require("scholars/setup/Draft")
+require("scholars/setup/Scroll Card Draw Pile")
+require("scholars/setup/Resource Cards")
+require("scholars/setup/Starting Translators")
+require("scholars/setup/main")
+require("scholars/setup/Solo")
+require("scholars/setup/Multiplayer")
+require("scholars/setup/Dispatch Buttons")
+require("scholars/setup/Rest")
+
+require("scholars/onLoad")
+require("scholars/counters/Spawn")
+
+require("scholars/scoring/game")
