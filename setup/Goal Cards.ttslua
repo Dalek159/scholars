@@ -1,3 +1,7 @@
+--[[
+Module that defines the Goal Cards available for play.
+
+]]
 GoalCards = {
     ['6b24dd'] = { -- Syriac
         ['scroll'] = getObjectFromGUID('5d735d'),
