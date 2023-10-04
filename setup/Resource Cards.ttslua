@@ -1,6 +1,8 @@
 --[[
-    The 10 Resource Cards that Players draft from during setup.
+The 10 Resource Cards that Players draft from during setup.
+
 ]]
+
 ResourceCards = {
     ['d3a62c'] = { -- 1
         ['white_die'] = 6,
