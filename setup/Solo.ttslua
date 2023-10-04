@@ -12,7 +12,7 @@ function SoloCheck()
 
     if count ~= 1 then
         broadcastToAll(
-            'Please only have one Player seated at a playable color.'
+            'Please only have one Player seated at a playable color.\n'
             .. 'If someone wants to watch, please have them switch to Grey',
             log_message_color
         )
