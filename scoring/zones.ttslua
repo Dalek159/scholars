@@ -1,23 +1,27 @@
+--[[
+Module dedicated to creating any zones necessary for scoring the game.
+
+]]
+
 function createScoringZones(x_scale, y_scale, z_scale)
     --[[
-        Create the zones for each seated Player that will determine
-        their end game state.
+    Create the zones for each Player that will determine their end game state.
 
-        The Scripting Zones are centered on the Player's board.
-        If playing Solo, then this function will also create a zone
-        for the Opponent.
+    The Scripting Zones are centered on the Player's board.
+    If playing Solo, then this function will also create a zone
+    for the Opponent.
 
-        Parameters
-        ----------
-        x_scale : float
-            The scale for the zone along the x-axis. Should be twice
-            the desired length of the Scripting Zone along this dimension.
-        y_scale : float
-            The scale for the zone along the y-axis. Should be twice
-            the desired length of the Scripting Zone along this dimension.
-        z_scale : float
-            The scale for the zone along the z-axis. Should be twice
-            the desired length of the Scripting Zone along this dimension.
+    Parameters
+    ----------
+    x_scale : float
+        The scale for the zone along the x-axis. Should be twice
+        the desired length of the Scripting Zone along this dimension.
+    y_scale : float
+        The scale for the zone along the y-axis. Should be twice
+        the desired length of the Scripting Zone along this dimension.
+    z_scale : float
+        The scale for the zone along the z-axis. Should be twice
+        the desired length of the Scripting Zone along this dimension.
 
     ]]
     local offset = Vector(0, 2.35, 0)
@@ -47,25 +51,27 @@ end
 
 function drawScoringZoneBoundaries(x_offset, y_offset, z_offset)
     --[[
-        Draw a rectangular footprint of the zones created by
-        createScoringZones on the x-z plane on the table so
-        that the Player can determine where all of their components
-        must be in ordered to factor into end game scoring.
+    Draw colored borders so that the Players know where the scoring zone are.
 
-        Parameters
-        ----------
-        x_offset : float
-            The aboslute value of the offset along the x-axis from
-            the center of the Player board to where the vertex of
-            the rectangle should be.
-        y_offset : float
-            The aboslute value of the offset along the y-axis from
-            the center of the Player board to where the vertex of
-            the rectangle should be.
-        z_offset : float
-            The aboslute value of the offset along the z-axis from
-            the center of the Player board to where the vertex of
-            the rectangle should be.
+    Draw a rectangular footprint of the zones created by
+    createScoringZones on the x-z plane on the table so
+    that the Player can determine where all of their components
+    must be in ordered to factor into end game scoring.
+
+    Parameters
+    ----------
+    x_offset : float
+        The aboslute value of the offset along the x-axis from
+        the center of the Player board to where the vertex of
+        the rectangle should be.
+    y_offset : float
+        The aboslute value of the offset along the y-axis from
+        the center of the Player board to where the vertex of
+        the rectangle should be.
+    z_offset : float
+        The aboslute value of the offset along the z-axis from
+        the center of the Player board to where the vertex of
+        the rectangle should be.
 
     ]]
     local line_thickness = 0.3
@@ -191,11 +197,13 @@ end
 
 function createGuildMembershipZones()
     --[[
-        Create the zones that will be used to gauge a
-        Player's membership with the Guilds.
+    Create the zones that will be used to gauge membership with the Guilds.
 
-        Membership here is denoted by the number of a Player's
-        Influence Markers that are present.
+    Membership here is denoted by the number of a Player's
+    Influence Markers that are present.
+
+    The zones are stored in the HouseOfWisdom table under their color
+    specific key as the value to the key "membership_zone".
 
     ]]
     HouseOfWisdom.purple.membership_zone = spawnObject({
@@ -219,11 +227,11 @@ end
 
 function createEmployedTranslatorZone()
     --[[
-        Create a zone for counting how many Employed Translators a Player has.
+    Create a zone for counting how many Employed Translators a Player has.
 
-        Create a zone across the Rooms capable of determining how many
-        Employed Translators have a Player's Influence Marker on them.
-        The zone is stored in the global variable EmployedTranslatorZone.
+    Create a zone across the Rooms capable of determining how many
+    Employed Translators have a Player's Influence Marker on them.
+    The zone is stored in the global variable EmployedTranslatorZone.
 
     ]]
     EmployedTranslatorZone = spawnObject({
@@ -235,10 +243,10 @@ end
 
 function createSoloResearchZone()
     --[[
-        Create a zone for counting the number of markers the Opponent has.
+    Create a zone for counting the number of markers the Opponent has.
 
-        Create a zone for determining how many Research Markers the
-        Opponent accumulated during the game.
+    Create a zone for determining how many Research Markers the
+    Opponent accumulated during the game.
 
     ]]
     opponent.research_zone = spawnObject({
