@@ -1,7 +1,6 @@
 function scoreScrollCards()
     --[[
-        Determine the points a Player scores from any Scroll
-        Cards they have translated.
+    Determine the points a Player scores from any Translated Scroll Cards.
 
     ]]
     for player_color, categories_tbl in pairs(PlayerEndState) do
