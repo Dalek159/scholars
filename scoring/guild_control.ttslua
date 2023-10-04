@@ -1,7 +1,6 @@
 function scoreGuildControl()
     --[[
-        Determine the points a Player scores from their control
-        of the various guilds.
+    Determine the points a Player scores from their control of the Guilds.
 
     ]]
     for guild, guild_tbl in pairs(HouseOfWisdom) do
