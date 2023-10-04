@@ -1,4 +1,8 @@
 function createDispatchButtons()
+    --[[
+    Create the dispatch button for each Translator Stack.
+
+    ]]
     -- dev
     -- local checkerOffset = Vector(0, 1, 4.41)
     -- prod
@@ -29,6 +33,19 @@ function createDispatchButtons()
 end
 
 function createDispatchButton(obj, player_color, alt_click)
+    --[[
+    Move the top Translator to the bottom of the respective Translator stack.
+
+    Parameters
+    ----------
+    obj : deck
+        The checker that is associated with the Translator deck.
+    player_color : str
+        The color of the Player that clicked the button.
+    alt_click : bool
+        True if a button other than left-click was used to click the button.
+
+    ]]
     local deck = TranslatorStacks[obj.getName()]
     -- Hide the card under the table for a sec, then put
     -- it on the bottom of the deck
@@ -36,4 +53,5 @@ function createDispatchButton(obj, player_color, alt_click)
         position = deck.getPosition() + Vector(0, -3, 0)
     })
     Wait.time(function() deck.putObject(card) end, 0.5)
+
 end
