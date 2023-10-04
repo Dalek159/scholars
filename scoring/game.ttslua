@@ -9,7 +9,13 @@ require("scholars/scoring/scroll_cards")
 require("scholars/scoring/display")
 
 function scoreGame()
+    --[[
+    Score the game.
 
+    Score the game, determine the winner(s), and output both the
+    short and long form of the scoring details.
+
+    ]]
     if not ScoreGameConfirmed then
         ScoreGameConfirmed = true
         -- Absolute value of the offsets in each direction
@@ -139,17 +145,22 @@ end
 
 function determineWinner()
     --[[
-        Tally the Players' totals and determine the game's winner.
+    Tally the Players' totals and determine the game's winner.
 
-        In determining the winner, the tie breakers are considered:
-            * First Tie Breaker: Player with the most Employed Translators
-            * Second Tie Breaker: Player with the most Workers remaining
-            * If still tied, all tied Players share the victory
+    In determining the winner, the tie breakers considered are:
+        * First Tie Breaker: Player with the most Employed Translators
+        * Second Tie Breaker: Player with the most Workers remaining
+        * If still tied, all tied Players share the victory
 
-        Returns
-        -------
-        table
-            An array containing the Player color(s) of the winner(s).
+    Returns
+    -------
+    table
+        An array containing the Player color(s) of the winner(s).
+
+    Notes
+    -----
+    If the Opponent is the winner, then the value in opponent.name will be
+    the entry in the array, not their color.
 
     ]]
     -- Add up the Players' totals
@@ -187,7 +198,7 @@ function determineWinner()
         table.insert(
             sortable_table,
             {
-                player_color = 'Opponent',
+                player_color = opponent.name,
                 total = OpponentScore.total,
                 employed_translators = 11, -- so it always wins the tie
                 workers = 0,
