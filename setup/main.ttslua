@@ -341,7 +341,6 @@ function ClearSetupComponents()
         * Resource Card Bag
         * Starting Translator Bag
         * Starting Scrolls for undealt Goal Cards
-        * Game components for non-seated Players
 
     ]]
     GoalCardBag.destruct()
@@ -355,16 +354,6 @@ function ClearSetupComponents()
     for _, obj in ipairs(getAllObjects()) do
         if obj.getGMNotes() == "Starting Scrolls" then
             obj.destruct()
-        end
-    end
-
-    for _, player_color in ipairs(PlayerTable) do
-        if Player[player_color].seated == false then
-            for _, obj in ipairs(getAllObjects()) do
-                if obj.getGMNotes() == player_color then
-                    obj.destruct()
-                end
-            end
         end
     end
 

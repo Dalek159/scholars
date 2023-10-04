@@ -329,9 +329,9 @@ function Solo2()
     -- Remove the components for non-seated players
     -- Relies on the GM notes (only visible to the Black player)
     for _, obj in ipairs(getAllObjects()) do
-        for i=1, 4 do
-            if Player[PlayerTable[i]].seated == false then
-                if obj.getGMNotes() == PlayerTable[i] then
+        for _, player_color in ipairs(PlayerTable) do
+            if Player[player_color].seated == false then
+                if obj.getGMNotes() == player_color then
                     obj.destruct()
                     break -- move to the next object
                 end
