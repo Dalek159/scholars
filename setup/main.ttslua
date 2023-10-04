@@ -61,7 +61,8 @@ function CasualSetup()
     Setup a Casual game.
 
     ]]
-    Setup('Casual')
+    game_type = 'Casual'
+    Setup()
 
 end
 
@@ -70,18 +71,14 @@ function EpicSetup()
     Setup an Epic game.
 
     ]]
-    Setup('Epic')
+    game_type = 'Epic'
+    Setup()
 
 end
 
-function Setup(game_type)
+function Setup()
     --[[
     Perform the actual setup of the requested game type.
-
-    Parameters
-    ----------
-    game_type : {'Casual', 'Epic'}
-        The type of game that was selected.
 
     ]]
 
@@ -135,6 +132,7 @@ function Setup(game_type)
 
     StartOfDrawPile()
     Wait.time(MiddleDrawPiles, 1.0)
+    EndOfDrawPile()
 
     DealOutGoalCards()
     Wait.time(LockGoalCardComponents, 3.0)

@@ -31,12 +31,8 @@ function MiddleDrawPiles()
     --[[
     Take the cards from the ShuffleBags to create the middle of the Draw Pile.
 
-    After the last card from the last ShuffleBag is drawn, call the
-    EndOfDrawPile function (after a short delay).
-
     ]]
     for i=1, #ShuffleBags do
-        local lastCardInBag = #ShuffleBags[i].getObjects()
         for idx, ObjectTable in ipairs(ShuffleBags[i].getObjects()) do
             local ScrollCardGUID = ObjectTable.guid
             local params = {
@@ -46,11 +42,6 @@ function MiddleDrawPiles()
                 rotation = Vector(0, 180, 180),
                 guid = ScrollCardGUID,
             }
-            if (i == #ShuffleBags) and (idx == lastCardInBag) then
-                params.callback_function = function()
-                    Wait.time(EndOfDrawPile, 6.0)
-                end
-            end
             local ScrollCard = ShuffleBags[i].takeObject(params)
         end
     end
@@ -62,11 +53,27 @@ function EndOfDrawPile()
     Add 3 Scroll Cards to the top of the Scroll Card Draw Pile.
 
     ]]
-    for i=1, 3 do
-        ScrollDeck.takeObject({
-            position = DeckZone.getPosition() + Vector(0, 0.1 * i + 2, 0),
-            rotation = Vector(0, 180, 180)
-        })
+    --[[
+        The middle stacks are dependent on Player Count and the type of game.
+        There are always 4 Caliph Cards, and then 1 Scroll Card on the
+        bottom of the Draw Pile.
+    ]]
+    local desiredSize = (
+        ScrollCardDrawDeckDepth[game_type][PlayerCount] * 4
+    ) + 4 + 1
+    local drawPile = GetDeck()
+
+    if drawPile == nil then
+        Wait.time(EndOfDrawPile, 3)
+    elseif drawPile.getQuantity() ~= desiredSize then
+        Wait.time(EndOfDrawPile, 1)
+    else
+        for i=1, 3 do
+            ScrollDeck.takeObject({
+                position = DeckZone.getPosition() + Vector(0, 0.1 * i + 2, 0),
+                rotation = Vector(0, 180, 180)
+            })
+        end
     end
 
 end
