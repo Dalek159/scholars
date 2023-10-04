@@ -1,5 +1,5 @@
 --[[
-Module defines all bags used by the mod
+Module defines all bags used by the mod.
 
 Note that since this module calls upon getObjectFromGUID, it must be
 required from inside a function (such as onLoad).
