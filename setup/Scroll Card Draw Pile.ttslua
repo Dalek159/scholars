@@ -23,11 +23,17 @@ function MiddleDrawPiles()
     for i=1, #ShuffleBags do
         for idx, ObjectTable in ipairs(ShuffleBags[i].getObjects()) do
             local ScrollCardGUID = ObjectTable.guid
-            local ScrollCard = ShuffleBags[i].takeObject({
+            local params = {
                 position = DeckZone.getPosition() + Vector(0, 0.1 * idx + 2 * i, 0),
                 rotation = Vector(0, 180, 180),
                 guid = ScrollCardGUID,
-            })
+            }
+            if i == #ShuffleBags then
+                params.callback_function = function()
+                    Wait.time(EndOfDrawPile, 6.0)
+                end
+            end
+            local ScrollCard = ShuffleBags[i].takeObject(params)
         end
     end
 

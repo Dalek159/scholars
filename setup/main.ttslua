@@ -108,7 +108,6 @@ function Setup(game_type)
 
     StartOfDrawPile()
     Wait.time(MiddleDrawPiles, 1.0)
-    Wait.time(EndOfDrawPile, 5.0)
 
     DealOutGoalCards()
     Wait.time(LockGoalCardComponents, 3.0)
