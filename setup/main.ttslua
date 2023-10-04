@@ -1,3 +1,7 @@
+--[[
+Module that serves as the driving force for setting up the game.
+
+]]
 StartingScrollLocations = {
     top_left_map = Vector(-14.80, 1.17, 7.01),
     bottom_left_map = Vector(-14.78, 1.17, 3.03),
@@ -11,8 +15,13 @@ StartingScrollLocations = {
 }
 
 function CasualOrEpicDialogue()
-    -- Create the display for the user to select between a
-    -- Casual or an Epic game
+    --[[
+    Create the buttons that allow the Players to select between the game types.
+
+    Create the display for the Players to select between a Casual
+    or an Epic Game.
+
+    ]]
     ButtonToken.createButton({
         click_function = 'CasualSetup',
         label = 'Casual Game',
@@ -44,19 +53,37 @@ function CasualOrEpicDialogue()
 
     CasualGameSetupCard = getObjectFromGUID('2efb92')
     CasualGameSetupCard.translate({0, 1.2, 0})
+
 end
 
 function CasualSetup()
+    --[[
+    Setup a Casual game.
+
+    ]]
     Setup('Casual')
 
 end
 
 function EpicSetup()
+    --[[
+    Setup an Epic game.
+
+    ]]
     Setup('Epic')
 
 end
 
 function Setup(game_type)
+    --[[
+    Perform the actual setup of the requested game type.
+
+    Parameters
+    ----------
+    game_type : {'Casual', 'Epic'}
+        The type of game that was selected.
+
+    ]]
 
     EpicGameSetupCard.destruct()
     CasualGameSetupCard.destruct()
@@ -134,13 +161,11 @@ function Setup(game_type)
         label          = 'Spawn a \nSilver Counter',
         position       = Vector(8, 2.5, -1.5),
         rotation       = Vector(0, 180, 0),
-        -- scale          = -- Vector,
         width          = 2200,
         height         = 1300,
         font_size      = 320,
         color          = Color.Black,
         font_color     = Color.White,
-        -- tooltip        = -- string,
     })
 
     ButtonToken.createButton({
@@ -149,13 +174,11 @@ function Setup(game_type)
         label          = 'Spawn a \nGold Counter',
         position       = Vector(0, 2.5, -1.5),
         rotation       = Vector(0, 180, 0),
-        -- scale          = -- Vector,
         width          = 2200,
         height         = 1300,
         font_size      = 320,
         color          = Color.Black,
         font_color     = Color.White,
-        -- tooltip        = -- string,
     })
 
     ScoringToken = getObjectFromGUID('4b66ad')
@@ -174,7 +197,12 @@ function Setup(game_type)
 end
 
 function DealOutGoalCards()
+    --[[
+    Deal out Goal Cards to the Players.
 
+    Deal out a Goal Card to each Player, and place on it the indicated items.
+
+    ]]
     -- Necessary offsets for putting out the related components to the
     -- selected Goal Card
     local GoalCardOffset = Vector(9.17, 0.11, 0.36)
@@ -231,6 +259,30 @@ function DealOutGoalCards()
 end
 
 function RestCleanUp(obj, player_color, alt_click)
+    --[[
+    Clean up the Player's Board.
+
+    The following actions are taken:
+        * Dice are returned to the Player's Bag
+        * Workers are destroyed
+        * Action Cards are returned to the Player's Hand
+        * If achieved, the Player's Goal Card will be returned to Hand
+
+    Parameters
+    ----------
+    obj : custom board
+        The Player's Board.
+    player_color : str
+        The color of the Player that clicked the button.
+    alt_click : bool
+        True if a button other than left-click was used to click the button.
+
+    Raises
+    ------
+    If a Player other than the one who "owns" the Board clicks the button,
+    a warning will appear reminding them to not touch other Player's components.
+
+    ]]
     if obj.getGMNotes() ~= player_color then
         broadcastToColor(
             "Please don't press another player's rest button.",
@@ -259,9 +311,17 @@ end
 
 
 function LockGoalCardComponents()
+    --[[
+    After initial placement, lock the Goal Card and its related items.
 
+    The Goal Card and its benefits being locked prevents the Rest button from
+    cleaning them up.
+
+    ]]
     for _, player_color in ipairs(getSeatedPlayers()) do
-        for _, obj in ipairs(PlayerComponents[player_color].lock_zone.getObjects()) do
+        for _, obj in ipairs(
+            PlayerComponents[player_color].lock_zone.getObjects()
+        ) do
             if obj.getLock() == false then
                 obj.setLock(true)
             end
@@ -271,6 +331,19 @@ function LockGoalCardComponents()
 end
 
 function ClearSetupComponents()
+    --[[
+    Delete any components not needed after setup.
+
+    This includes
+        * Goal Card Bag
+        * Shuffle Bags
+        * Caliph Card Bag
+        * Resource Card Bag
+        * Starting Translator Bag
+        * Starting Scrolls for undealt Goal Cards
+        * Game components for non-seated Players
+
+    ]]
     GoalCardBag.destruct()
     for _, shuffle_bag in ipairs(ShuffleBags) do
         shuffle_bag.destruct()
