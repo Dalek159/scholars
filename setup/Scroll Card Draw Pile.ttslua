@@ -21,6 +21,7 @@ end
 
 function MiddleDrawPiles()
     for i=1, #ShuffleBags do
+        local lastCardInBag = #ShuffleBags[i].getObjects()
         for idx, ObjectTable in ipairs(ShuffleBags[i].getObjects()) do
             local ScrollCardGUID = ObjectTable.guid
             local params = {
@@ -28,7 +29,7 @@ function MiddleDrawPiles()
                 rotation = Vector(0, 180, 180),
                 guid = ScrollCardGUID,
             }
-            if i == #ShuffleBags then
+            if (i == #ShuffleBags) and (idx == lastCardInBag) then
                 params.callback_function = function()
                     Wait.time(EndOfDrawPile, 6.0)
                 end
