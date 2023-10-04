@@ -1,14 +1,14 @@
 function determinePlayerOrder()
     --[[
-        Determine the first player.
+    Determine the first player.
 
-        Randomly determines the first player and creates the resulting
-        turn order assuming clockwise play around the existing hands.
+    Randomly determines the first player and creates the resulting
+    turn order assuming clockwise play around the existing hands.
 
-        Returns
-        -------
-        table
-            Integer-indexed table of the string form of Player Colors.
+    Returns
+    -------
+    table
+        Integer-indexed table of the string form of Player Colors.
 
     ]]
     local Players = getSeatedPlayers()
