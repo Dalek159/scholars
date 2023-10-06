@@ -1,0 +1,358 @@
+--[[
+Module that serves as the driving force for setting up the game.
+
+]]
+StartingScrollLocations = {
+    top_left_map = Vector(-14.80, 1.17, 7.01),
+    bottom_left_map = Vector(-14.78, 1.17, 3.03),
+    top_mid_map = Vector(-12.06, 1.17, 7.04),
+    bot_mid_map = Vector(-12.06, 1.17, 3.05),
+    top_right_map = Vector(-9.34, 1.17, 7.05),
+    bot_right_map = Vector(-9.33, 1.17, 3.06),
+    purple_guild = Vector(13.29, 1.17, 8.37),
+    orange_guild = Vector(16.52, 1.17, 8.36),
+    green_guild = Vector(19.70, 1.17, 8.36)
+}
+
+function CasualOrEpicDialogue()
+    --[[
+    Create the buttons that allow the Players to select between the game types.
+
+    Create the display for the Players to select between a Casual
+    or an Epic Game.
+
+    ]]
+    ButtonToken.createButton({
+        click_function = 'CasualSetup',
+        label = 'Casual Game',
+        function_owner = self,
+        position = {0, 3, 1.5},
+        rotation = {0, 180, 0},
+        width = 3000,
+        height = 960,
+        font_size = 360,
+        color = Color.Black,
+        font_color = Color.White
+    })
+
+    ButtonToken.createButton({
+        click_function = 'EpicSetup',
+        label = 'Epic Game',
+        function_owner = self,
+        position = {0, 3, -1.5},
+        rotation = {0, 180, 0},
+        width = 3000,
+        height = 960,
+        font_size = 360,
+        color = Color.Black,
+        font_color = Color.White
+    })
+
+    EpicGameSetupCard = getObjectFromGUID('663d65')
+    EpicGameSetupCard.translate({0, 1.2, 0})
+
+    CasualGameSetupCard = getObjectFromGUID('2efb92')
+    CasualGameSetupCard.translate({0, 1.2, 0})
+
+end
+
+function CasualSetup()
+    --[[
+    Setup a Casual game.
+
+    ]]
+    game_type = 'Casual'
+    Setup()
+
+end
+
+function EpicSetup()
+    --[[
+    Setup an Epic game.
+
+    ]]
+    game_type = 'Epic'
+    Setup()
+
+end
+
+function Setup()
+    --[[
+    Perform the actual setup of the requested game type.
+
+    ]]
+
+    EpicGameSetupCard.destruct()
+    CasualGameSetupCard.destruct()
+    ButtonToken.clearButtons()
+
+    SoloBoardBag.destruct()
+    SoloComponentBag.destruct()
+
+    ScrollDeck.shuffle()
+    CaliphBag.shuffle()
+
+    createDispatchButtons()
+    for language, deck in pairs(TranslatorStacks) do
+        deck.shuffle()
+    end
+
+    --6 Cards in Travel area and 3 in House of Wisdom
+    for k, vec in pairs(StartingScrollLocations) do
+        ScrollDeck.takeObject({
+            flip = true,
+            position = vec,
+            rotation = {0.00, 180.00, 180.00}
+        })
+    end
+
+    -- Put a Caliph Card in each of the "middle" piles
+    for i=1, #CaliphBag.getObjects() do
+        CaliphCard = CaliphBag.takeObject()
+        ShuffleBags[i].putObject(CaliphCard)
+    end
+
+    for i=1, #ShuffleBags do
+        for j=1, ScrollCardDrawDeckDepth[game_type][PlayerCount] do
+            ShuffleBags[i].putObject(ScrollDeck.takeObject())
+        end
+
+        ShuffleBags[i].shuffle()
+    end
+
+    turnOrder = determinePlayerOrder()
+    setDraftOrder()
+    firstPlayerMarker = getObjectFromGUID('c6f6d2')
+    firstPlayerMarker.setPosition(
+        PlayerComponents[turnOrder[1]].board.getPosition() + Vector(0, 0, 4)
+    )
+
+    StartingTranslatorBag.shuffle()
+    ResourceCardBag.shuffle()
+
+    StartOfDrawPile()
+    Wait.time(MiddleDrawPiles, 1.0)
+    EndOfDrawPile()
+
+    DealOutGoalCards()
+    Wait.time(LockGoalCardComponents, 3.0)
+    SetUpDraft()
+    Wait.time(ClearSetupComponents, 8.0)
+
+    ButtonToken.createButton({
+        click_function = 'RestCard',
+        label = 'Rest',
+        function_owner = self,
+        position = {-14, 2.5, -1.5},
+        rotation = {0, 180, 0},
+        width = 2000,
+        height = 960,
+        font_size = 360,
+        color = Color.Black,
+        font_color = Color.White,
+        tooltip = 'This will take the card from the bottom of the deck.'
+    })
+
+    ButtonToken.createButton({
+        click_function = 'SpawnSilverCounter',
+        function_owner = self,
+        label          = 'Spawn a \nSilver Counter',
+        position       = Vector(8, 2.5, -1.5),
+        rotation       = Vector(0, 180, 0),
+        width          = 2200,
+        height         = 1300,
+        font_size      = 320,
+        color          = Color.Black,
+        font_color     = Color.White,
+    })
+
+    ButtonToken.createButton({
+        click_function = 'SpawnGoldCounter',
+        function_owner = self,
+        label          = 'Spawn a \nGold Counter',
+        position       = Vector(0, 2.5, -1.5),
+        rotation       = Vector(0, 180, 0),
+        width          = 2200,
+        height         = 1300,
+        font_size      = 320,
+        color          = Color.Black,
+        font_color     = Color.White,
+    })
+
+    ScoringToken = getObjectFromGUID('4b66ad')
+    ScoringToken.createButton({
+        click_function = 'scoreGame',
+        function_owner = self,
+        label          = 'Score Game',
+        position       = Vector(0, 2.5, 0),
+        width          = 2600,
+        height         = 1000,
+        font_size      = 360,
+        color          = Color.Black,
+        font_color     = Color.White,
+    })
+
+end
+
+function DealOutGoalCards()
+    --[[
+    Deal out Goal Cards to the Players.
+
+    Deal out a Goal Card to each Player, and place on it the indicated items.
+
+    ]]
+    -- Necessary offsets for putting out the related components to the
+    -- selected Goal Card
+    local GoalCardOffset = Vector(9.17, 0.11, 0.36)
+    local StartingScrollOffset = Vector(9.17, 0.11, 5.30)
+    local WhiteWorkerOffset = Vector(-0.7, 0.69, 0.77)
+    local ColoredWorkerOffset = Vector(-0.67, 0.69, -0.31)
+    local SecondaryDieOffset = Vector(-0.66, 0.69, -1.08)
+    -- For each seated player, assign a Goal Card, its associated
+    -- Scroll Card, and the components displayed on it.
+    for _, PlayerColor in ipairs(getSeatedPlayers()) do
+        local PlayerBoard = PlayerComponents[PlayerColor].board
+        -- Due to Lua's asinine race conditions, we won't be able to
+        -- reference the card's position in this loop, because it will
+        -- still think it is in the bag
+        local GoalCardPosition = PlayerBoard.getPosition() + GoalCardOffset
+        GoalCard = GoalCardBag.takeObject({
+            position = GoalCardPosition,
+            rotation = {0.00, 180.00, 180.00}
+        })
+
+        PlayerBoard.createButton({
+            click_function = 'RestCleanUp',
+            label = 'Rest Clean Up',
+            position = {3.80, 0.2, 1.3},
+            rotation = {0, 0, 0},
+            width = 600,
+            height = 200,
+            font_size = 80,
+            color = Color.Black,
+            font_color = Color.White
+        })
+
+        GoalCardInfo = GoalCards[GoalCard.getGUID()]
+        local ScrollCard = GoalCardInfo.scroll
+        test = PlayerBoard.getPosition() + StartingScrollOffset
+        ScrollCard.setPositionSmooth(
+            PlayerBoard.getPosition() + StartingScrollOffset -- vector
+        )
+        ScrollCard.setRotation({0, 180, 0})
+        ScrollCard.setGMNotes(PlayerColor)
+        WhiteWorkerBag.takeObject({
+            position = GoalCardPosition + Vector(-0.7, 0.69, 1.12),
+            rotation = Vector(-90, 180, 0),
+        })
+        GoalCardInfo.colored_worker.takeObject({
+            position = GoalCardPosition + Vector(-0.67, 0.69, 0.04),
+            rotation = Vector(-90, 180, 0),
+        })
+        GoalCardInfo.secondary_die.takeObject({
+            position = GoalCardPosition + Vector(-0.66, 0.69, -1.08)
+        })
+    end
+
+end
+
+function RestCleanUp(obj, player_color, alt_click)
+    --[[
+    Clean up the Player's Board.
+
+    The following actions are taken:
+        * Dice are returned to the Player's Bag
+        * Workers are destroyed
+        * Action Cards are returned to the Player's Hand
+        * If achieved, the Player's Goal Card will be returned to Hand
+
+    Parameters
+    ----------
+    obj : custom board
+        The Player's Board.
+    player_color : str
+        The color of the Player that clicked the button.
+    alt_click : bool
+        True if a button other than left-click was used to click the button.
+
+    Raises
+    ------
+    If a Player other than the one who "owns" the Board clicks the button,
+    a warning will appear reminding them to not touch other Player's components.
+
+    ]]
+    if obj.getGMNotes() ~= player_color then
+        broadcastToColor(
+            "Please don't press another player's rest button.",
+            player_color,
+            log_message_color
+        )
+        return 0
+    end
+
+    for _, obj in ipairs(PlayerComponents[player_color].rest_zone.getObjects()) do
+        if obj.getLock() == false then
+            if obj.getGMNotes() == "Worker" then
+                obj.destruct()
+            elseif obj.getGMNotes() == "Dice" then
+                PlayerComponents[player_color].dice_bag.putObject(obj)
+            elseif obj.getGMNotes() == player_color then -- Action Cards
+                obj.deal(1, player_color)
+            end
+            if obj.getGMNotes() == "Objective" then -- Goal Card
+                obj.deal(1, player_color)
+            end
+        end
+    end
+
+end
+
+
+function LockGoalCardComponents()
+    --[[
+    After initial placement, lock the Goal Card and its related items.
+
+    The Goal Card and its benefits being locked prevents the Rest button from
+    cleaning them up.
+
+    ]]
+    for _, player_color in ipairs(getSeatedPlayers()) do
+        for _, obj in ipairs(
+            PlayerComponents[player_color].lock_zone.getObjects()
+        ) do
+            if obj.getLock() == false then
+                obj.setLock(true)
+            end
+        end
+    end
+
+end
+
+function ClearSetupComponents()
+    --[[
+    Delete any components not needed after setup.
+
+    This includes
+        * Goal Card Bag
+        * Shuffle Bags
+        * Caliph Card Bag
+        * Resource Card Bag
+        * Starting Translator Bag
+        * Starting Scrolls for undealt Goal Cards
+
+    ]]
+    GoalCardBag.destruct()
+    for _, shuffle_bag in ipairs(ShuffleBags) do
+        shuffle_bag.destruct()
+    end
+    CaliphBag.destruct()
+    ResourceCardBag.destruct()
+    StartingTranslatorBag.destruct()
+
+    for _, obj in ipairs(getAllObjects()) do
+        if obj.getGMNotes() == "Starting Scrolls" then
+            obj.destruct()
+        end
+    end
+
+end

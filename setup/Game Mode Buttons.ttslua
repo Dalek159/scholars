@@ -1,0 +1,27 @@
+ButtonToken.createButton({
+    click_function = 'Multiplayer',
+    label = 'Multiplayer',
+    function_owner = self,
+    position = {0, 3, 1.5},
+    rotation = {0, 180, 0},
+    width = 3000,
+    height = 960,
+    font_size = 360,
+    color = Color.Black,
+    font_color = Color.White,
+    tooltip = 'All Players should be seated before clicking this.'
+})
+
+ButtonToken.createButton({
+    click_function = 'SoloCheck',
+    label = 'Solo',
+    function_owner = self,
+    position = {0, 3, -1.5},
+    rotation = {0, 180, 0},
+    width = 3000,
+    height = 960,
+    font_size = 360,
+    color = Color.Black,
+    font_color = Color.White,
+    tooltip = 'Please only have one Player seated at a playable color.'
+})

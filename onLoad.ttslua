@@ -1,0 +1,121 @@
+function onLoad()
+    ScrollDrawDeckExhausted = false
+    ScoreGameConfirmed = false
+    MasterSilverCounter = getObjectFromGUID('07cc26')
+    MasterGoldCounter = getObjectFromGUID('927b5e')
+    -- If you need to summon the Master Counters for some reason
+    -- Just make sure to put them back out of sight
+    -- MasterSilverCounter.setPosition(Vector(-7, -1, 0))
+    -- MasterGoldCounter.setPosition(Vector(7, -1, 0))
+
+    PlayerTable = {
+        "Teal",
+        "Red",
+        "Purple",
+        "Yellow"
+    }
+
+    languages = {
+        'Chinese',
+        'Sanskrit',
+        'Greek',
+        'Hebrew',
+        'Persian',
+        'Syriac'
+    }
+
+    ButtonToken = getObjectFromGUID('1655e7')
+
+    require("scholars/Bags")
+    require("scholars/setup/Goal Cards")
+    require("scholars/setup/Get Zones")
+    require("scholars/setup/Game Mode Buttons")
+
+    opponent = {
+        name = 'Opponent',
+        color = Color.Orange,
+        influence_bag = getObjectFromGUID('46be48'),
+    }
+
+    PlayerComponents = {
+        Red = {
+            ['rest_zone'] = getObjectFromGUID('b9ce29'),
+            ['board'] = getObjectFromGUID('f6bf05'),
+            ['dice_bag'] = getObjectFromGUID('ead9eb'),
+            ['lock_zone'] = getObjectFromGUID('654f36'),
+            ['influence_bag'] = getObjectFromGUID('62bf1a'),
+            ['research_markers'] = {
+                ['Mathematics'] = getObjectFromGUID('225708'),
+                ['Physics'] = getObjectFromGUID('d2315f'),
+                ['Chemistry'] = getObjectFromGUID('69eff0'),
+                ['Philosophy'] = getObjectFromGUID('707b75'),
+                ['Biology'] = getObjectFromGUID('7e4868'),
+                ['Astronomy'] = getObjectFromGUID('e77609'),
+            },
+        },
+        Teal = {
+            ['rest_zone'] = getObjectFromGUID('31bd64'),
+            ['board'] = getObjectFromGUID('c3838a'),
+            ['dice_bag'] = getObjectFromGUID('5b181f'),
+            ['lock_zone'] = getObjectFromGUID('f8bb36'),
+            ['influence_bag'] = getObjectFromGUID('8a54d2'),
+            ['research_markers'] = {
+                ['Mathematics'] = getObjectFromGUID('4f63df'),
+                ['Physics'] = getObjectFromGUID('4aa02b'),
+                ['Chemistry'] = getObjectFromGUID('fd544e'),
+                ['Philosophy'] = getObjectFromGUID('b8f396'),
+                ['Biology'] = getObjectFromGUID('d550d1'),
+                ['Astronomy'] = getObjectFromGUID('eba600'),
+            },
+        },
+        Yellow = {
+            ['rest_zone'] = getObjectFromGUID('2a3034'),
+            ['board'] = getObjectFromGUID('6b03cc'),
+            ['dice_bag'] = getObjectFromGUID('f20d04'),
+            ['lock_zone'] = getObjectFromGUID('bee7d9'),
+            ['influence_bag'] = getObjectFromGUID('aee2c5'),
+            ['research_markers'] = {
+                ['Mathematics'] = getObjectFromGUID('20faf2'),
+                ['Physics'] = getObjectFromGUID('bc5620'),
+                ['Chemistry'] = getObjectFromGUID('41da56'),
+                ['Philosophy'] = getObjectFromGUID('e65312'),
+                ['Biology'] = getObjectFromGUID('827a2c'),
+                ['Astronomy'] = getObjectFromGUID('b07a35'),
+            },
+        },
+        Purple = {
+            ['rest_zone'] = getObjectFromGUID('7b7520'),
+            ['board'] = getObjectFromGUID('35d99f'),
+            ['dice_bag'] = getObjectFromGUID('3537f1'),
+            ['lock_zone'] = getObjectFromGUID('0d7c09'),
+            ['influence_bag'] = getObjectFromGUID('d46626'),
+            ['research_markers'] = {
+                ['Mathematics'] = getObjectFromGUID('309237'),
+                ['Physics'] = getObjectFromGUID('657673'),
+                ['Chemistry'] = getObjectFromGUID('358b40'),
+                ['Philosophy'] = getObjectFromGUID('035467'),
+                ['Biology'] = getObjectFromGUID('f6e254'),
+                ['Astronomy'] = getObjectFromGUID('5e5615'),
+            },
+        },
+    }
+
+    for _, player_color in ipairs(PlayerTable) do
+        PlayerComponents[player_color].board.interactable = false
+    end
+
+    TranslatorStacks = {
+        Chinese = getObjectFromGUID('c12808'),
+        Sanskrit = getObjectFromGUID('0637a5'),
+        Greek = getObjectFromGUID('6140fc'),
+        Hebrew = getObjectFromGUID('ece7f2'),
+        Persian = getObjectFromGUID('f1d216'),
+        Syriac = getObjectFromGUID('a7f59f'),
+        Wild1 = getObjectFromGUID('7401c5'),
+        Wild2 = getObjectFromGUID('6bcef3'),
+    }
+
+    DeckZone = getObjectFromGUID('24f2d2')
+    ScrollDeck = getObjectFromGUID('ce794a')
+
+end

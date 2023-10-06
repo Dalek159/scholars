@@ -1,0 +1,258 @@
+--[[
+Module dedicated to creating any zones necessary for scoring the game.
+
+]]
+
+function createScoringZones(x_scale, y_scale, z_scale)
+    --[[
+    Create the zones for each Player that will determine their end game state.
+
+    The Scripting Zones are centered on the Player's board.
+    If playing Solo, then this function will also create a zone
+    for the Opponent.
+
+    Parameters
+    ----------
+    x_scale : float
+        The scale for the zone along the x-axis. Should be twice
+        the desired length of the Scripting Zone along this dimension.
+    y_scale : float
+        The scale for the zone along the y-axis. Should be twice
+        the desired length of the Scripting Zone along this dimension.
+    z_scale : float
+        The scale for the zone along the z-axis. Should be twice
+        the desired length of the Scripting Zone along this dimension.
+
+    ]]
+    local offset = Vector(0, 2.35, 0)
+    for _, player_color in ipairs(getSeatedPlayers()) do
+        local pos = PlayerComponents[player_color].board.getPosition()
+        -- Bump up the zone so it "stands" on the table
+        pos = pos + offset
+        PlayerComponents[player_color].scoring_zone = spawnObject({
+            type = 'ScriptingTrigger',
+            position = pos,
+            scale = Vector(x_scale, y_scale, z_scale),
+        })
+    end
+
+    if soloMode then
+        local pos = opponent.board.getPosition()
+        -- Bump up the zone so it "stands" on the table
+        pos = pos + offset
+        opponent.scoring_zone = spawnObject({
+            type = 'ScriptingTrigger',
+            position = pos,
+            scale = Vector(x_scale, y_scale, z_scale),
+        })
+    end
+
+end
+
+function drawScoringZoneBoundaries(x_offset, y_offset, z_offset)
+    --[[
+    Draw colored borders so that the Players know where the scoring zone are.
+
+    Draw a rectangular footprint of the zones created by
+    createScoringZones on the x-z plane on the table so
+    that the Player can determine where all of their components
+    must be in ordered to factor into end game scoring.
+
+    Parameters
+    ----------
+    x_offset : float
+        The aboslute value of the offset along the x-axis from
+        the center of the Player board to where the vertex of
+        the rectangle should be.
+    y_offset : float
+        The aboslute value of the offset along the y-axis from
+        the center of the Player board to where the vertex of
+        the rectangle should be.
+    z_offset : float
+        The aboslute value of the offset along the z-axis from
+        the center of the Player board to where the vertex of
+        the rectangle should be.
+
+    ]]
+    local line_thickness = 0.3
+
+    -- setVectorLines will erase any existing Global vector lines,
+    -- so start by preserving any that do exist
+    local linesTable = Global.getVectorLines()
+    for _, player_color in ipairs(getSeatedPlayers()) do
+        local player_board = PlayerComponents[player_color].board
+        local top_left = player_board.getPosition() + Vector(
+            -1 * x_offset,
+            y_offset,
+            z_offset
+        )
+        local top_right = player_board.getPosition() + Vector(
+            x_offset,
+            y_offset,
+            z_offset
+        )
+        local bottom_left = player_board.getPosition() + Vector(
+            -1 * x_offset,
+            y_offset,
+            -1 * z_offset
+        )
+        local bottom_right = player_board.getPosition() + Vector(
+            x_offset,
+            y_offset,
+            -1 * z_offset
+        )
+        table.insert(
+            linesTable,
+            {
+                points = {top_left, top_right},
+                color = player_color,
+                thickness = line_thickness,
+            }
+        )
+        table.insert(
+            linesTable,
+            {
+                points = {top_right, bottom_right},
+                color = player_color,
+                thickness = line_thickness,
+            }
+        )
+        table.insert(
+            linesTable,
+            {
+                points = {bottom_right, bottom_left},
+                color = player_color,
+                thickness = line_thickness,
+            }
+        )
+        table.insert(
+            linesTable,
+            {
+                points = {bottom_left, top_left},
+                color = player_color,
+                thickness = line_thickness,
+            }
+        )
+    end
+
+    if soloMode then
+        local thickness_difference = 0.20
+        local top_left = opponent.board.getPosition() + Vector(
+            -1 * x_offset,
+            y_offset + thickness_difference,
+            z_offset
+        )
+        local top_right = opponent.board.getPosition() + Vector(
+            x_offset,
+            y_offset + thickness_difference,
+            z_offset
+        )
+        local bottom_left = opponent.board.getPosition() + Vector(
+            -1 * x_offset,
+            y_offset + thickness_difference,
+            -1 * z_offset
+        )
+        local bottom_right = opponent.board.getPosition() + Vector(
+            x_offset,
+            y_offset + thickness_difference,
+            -1 * z_offset
+        )
+        table.insert(
+            linesTable,
+            {
+                points = {top_left, top_right},
+                color = opponent.color,
+                thickness = line_thickness,
+            }
+        )
+        table.insert(
+            linesTable,
+            {
+                points = {top_right, bottom_right},
+                color = opponent.color,
+                thickness = line_thickness,
+            }
+        )
+        table.insert(
+            linesTable,
+            {
+                points = {bottom_right, bottom_left},
+                color = opponent.color,
+                thickness = line_thickness,
+            }
+        )
+        table.insert(
+            linesTable,
+            {
+                points = {bottom_left, top_left},
+                color = opponent.color,
+                thickness = line_thickness,
+            }
+        )
+    end
+
+    Global.setVectorLines(linesTable)
+
+end
+
+function createGuildMembershipZones()
+    --[[
+    Create the zones that will be used to gauge membership with the Guilds.
+
+    Membership here is denoted by the number of a Player's
+    Influence Markers that are present.
+
+    The zones are stored in the HouseOfWisdom table under their color
+    specific key as the value to the key "membership_zone".
+
+    ]]
+    HouseOfWisdom.purple.membership_zone = spawnObject({
+        type = 'ScriptingTrigger',
+        position = Vector(13.30, 1.92, 12.08),
+        scale = Vector(3.10, 1.50, 3.65),
+    })
+
+    HouseOfWisdom.orange.membership_zone = spawnObject({
+        type = 'ScriptingTrigger',
+        position = Vector(16.50, 1.92, 12.08),
+        scale = Vector(3.10, 1.50, 3.65),
+    })
+
+    HouseOfWisdom.green.membership_zone = spawnObject({
+        type = 'ScriptingTrigger',
+        position = Vector(19.70, 1.92, 12.08),
+        scale = Vector(3.10, 1.50, 3.65),
+    })
+end
+
+function createEmployedTranslatorZone()
+    --[[
+    Create a zone for counting how many Employed Translators a Player has.
+
+    Create a zone across the Rooms capable of determining how many
+    Employed Translators have a Player's Influence Marker on them.
+    The zone is stored in the global variable EmployedTranslatorZone.
+
+    ]]
+    EmployedTranslatorZone = spawnObject({
+        type = 'ScriptingTrigger',
+        position = Vector(1.30, 1.42, -3.82),
+        scale = Vector(38.00, 0.50, 0.50),
+    })
+end
+
+function createSoloResearchZone()
+    --[[
+    Create a zone for counting the number of markers the Opponent has.
+
+    Create a zone for determining how many Research Markers the
+    Opponent accumulated during the game.
+
+    ]]
+    opponent.research_zone = spawnObject({
+        type = 'ScriptingTrigger',
+        position = opponent.board.getPosition() + Vector(0, 0.35, 1.43),
+        scale = Vector(4.6, 0.5, 1.0),
+    })
+
+end

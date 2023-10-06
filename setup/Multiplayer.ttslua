@@ -1,0 +1,25 @@
+function Multiplayer()
+    --[[
+    Set the game to Multiplayer and ask the Players what game type they want.
+
+    ]]
+    ButtonToken.clearButtons()
+    soloMode = false
+
+    -- Remove the components for non-seated players
+    -- Relies on the GM notes (only visible to the Black player)
+    for _, player_color in ipairs(PlayerTable) do
+        if Player[player_color].seated == false then
+            for _, obj in ipairs(getAllObjects()) do
+                if obj.getGMNotes() == player_color then
+                    obj.destruct()
+                end
+            end
+        end
+    end
+
+    opponent.influence_bag.destruct()
+    PlayerCount = #getSeatedPlayers()
+    CasualOrEpicDialogue()
+
+end

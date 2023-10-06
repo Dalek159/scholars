@@ -1,0 +1,233 @@
+require("scholars/scoring/End State")
+require("scholars/scoring/zones")
+require("scholars/scoring/retired_translators")
+require("scholars/scoring/guild_control")
+require("scholars/scoring/caliph_cards")
+require("scholars/scoring/research_tracks")
+require("scholars/scoring/dice_sum")
+require("scholars/scoring/scroll_cards")
+require("scholars/scoring/display")
+
+function scoreGame()
+    --[[
+    Score the game.
+
+    Score the game, determine the winner(s), and output both the
+    short and long form of the scoring details.
+
+    ]]
+    if not ScoreGameConfirmed then
+        ScoreGameConfirmed = true
+        -- Absolute value of the offsets in each direction
+        -- from the Player's board
+        local x_offset = 14
+        local y_offset = -0.15
+        local z_offset = 9
+        createScoringZones(2 * x_offset, 5.1, 2 * z_offset)
+        drawScoringZoneBoundaries(x_offset, y_offset, z_offset)
+        createGuildMembershipZones()
+        createEmployedTranslatorZone()
+        if soloMode then
+            createSoloResearchZone()
+        end
+
+        broadcastToAll(
+            'Read the console message before pressing the '
+            .. '"Score Game" button again.',
+            log_message_color
+        )
+        printToAll(
+            '\n\nEach Player should ensure that all of the items in their '
+            .. 'play area are inside their colored rectangle. Additionally, '
+            .. 'make sure that Retired Translators and Translated Scroll '
+            .. 'Cards are not stacked (i.e. decks), or they will not '
+            .. 'be scored.',
+            log_message_color
+        )
+        return 0
+    -- Second time, clean up each Player's area
+    else
+        for _, player_color in ipairs(getSeatedPlayers()) do
+            for _, obj in ipairs(PlayerComponents[player_color].rest_zone.getObjects()) do
+                if obj.getGMNotes() == 'Worker' then
+                    obj.destruct()
+                end
+            end
+
+            for _, obj in ipairs(PlayerComponents[player_color].scoring_zone.getObjects()) do
+                if obj.getGMNotes() == 'Dice' then
+
+                    if obj.getLock() then
+                        obj.setLock(false)
+                        local supply_bag = nil
+                        if obj.getName() == 'Purple Die' then
+                            supply_bag = PurpleDiceBag
+                        elseif obj.getName() == 'Orange Die' then
+                            supply_bag = OrangeDiceBag
+                        elseif obj.getName() == 'Green Die' then
+                            supply_bag = GreenDiceBag
+                        end
+
+                        supply_bag.putObject(obj)
+                    else
+                        PlayerComponents[player_color].dice_bag.putObject(obj)
+                    end
+                end
+            end
+        end
+
+        -- If the Players are rescoring, move any Influence
+        -- Markers from the Dice Sum scoring area
+        for _, zone_tbl in ipairs(DiceSumZones) do
+            for _, obj in ipairs(zone_tbl.zone.getObjects()) do
+                if obj.hasTag('Influence') then
+                    local player_color = obj.getGMNotes()
+                    if player_color ~= opponent.name then
+                        PlayerComponents[
+                            player_color
+                        ].influence_bag.putObject(obj)
+                    else
+                        opponent.influence_bag.putObject(obj)
+                    end
+                end
+            end
+        end
+
+    end
+
+    scoring_categories = {
+        'dice_sum',
+        'retired_translators',
+        'guild_control',
+        'caliph_cards',
+        'research_tracks',
+        'scroll_cards',
+    }
+    PlayerScores = {}
+    for i, player_color in ipairs(getSeatedPlayers()) do
+        PlayerScores[player_color] = {}
+        for j, category in ipairs(scoring_categories) do
+            PlayerScores[player_color][category] = {}
+            PlayerScores[player_color][category].total = 0
+            PlayerScores[player_color][category].itemized = {}
+        end
+
+        PlayerScores[player_color].total = 0
+    end
+
+    determineEndState()
+    if soloMode then
+        determineOpponentState()
+
+        OpponentScore = {}
+        for _, category in ipairs(scoring_categories) do
+            if category ~= 'research_tracks' then
+                OpponentScore[category] = {}
+                OpponentScore[category].total = 0
+                OpponentScore[category].itemized = {}
+            end
+        end
+        OpponentScore.total = 0
+    end
+
+    scoreRetiredTranslators()
+    scoreGuildControl()
+    scoreCaliphCards()
+    scoreResearchTracks()
+    scoreDiceSum()
+    scoreScrollCards()
+
+    local winners = determineWinner()
+    printScoreDetails()
+    broadcastWinners(winners)
+
+end
+
+function determineWinner()
+    --[[
+    Tally the Players' totals and determine the game's winner.
+
+    In determining the winner, the tie breakers considered are:
+        * First Tie Breaker: Player with the most Employed Translators
+        * Second Tie Breaker: Player with the most Workers remaining
+        * If still tied, all tied Players share the victory
+
+    Returns
+    -------
+    table
+        An array containing the Player color(s) of the winner(s).
+
+    Notes
+    -----
+    If the Opponent is the winner, then the value in opponent.name will be
+    the entry in the array, not their color.
+
+    ]]
+    -- Add up the Players' totals
+    for _, player_color in ipairs(getSeatedPlayers()) do
+        for category, cat_table in pairs(PlayerScores[player_color]) do
+            if category ~= 'total' then
+                PlayerScores[player_color].total = PlayerScores[
+                    player_color].total + cat_table.total
+            end
+        end
+    end
+    if soloMode then
+        for category, cat_table in pairs(OpponentScore) do
+            if category ~= 'total' then
+                OpponentScore.total = OpponentScore.total + cat_table.total
+            end
+        end
+    end
+
+    -- Build an integer-indexed table for the Players' scores
+    -- that can be sorted
+    local sortable_table = {}
+    for _, player_color in ipairs(getSeatedPlayers()) do
+        table.insert(
+            sortable_table,
+            {
+                player_color = player_color,
+                total = PlayerScores[player_color].total,
+                employed_translators = PlayerEndState[player_color].employed_translators.num,
+                workers = PlayerEndState[player_color].Workers.num,
+            }
+        )
+    end
+    if soloMode then
+        table.insert(
+            sortable_table,
+            {
+                player_color = opponent.name,
+                total = OpponentScore.total,
+                employed_translators = 11, -- so it always wins the tie
+                workers = 0,
+            }
+        )
+    end
+    sortDescending(sortable_table, {'total', 'employed_translators', 'workers'})
+
+    -- Now we have to deal with ties
+    -- First Tie Breaker: Player with the most Employed Translators
+    -- Second Tie Breaker: Player with the most Workers remaining
+    -- If still tied, all tied Players share the victory
+    local winners = {sortable_table[1].player_color}
+    for j = 2, # getSeatedPlayers() do
+        if sortable_table[j].total == sortable_table[1].total then
+            if sortable_table[j].employed_translators == sortable_table[1].employed_translators then
+                if sortable_table[j].workers == sortable_table[1].workers then
+                    table.insert(winners, sortable_table[j].player_color)
+                else
+                    break
+                end
+            else
+                break
+            end
+        else
+            break
+        end
+    end
+
+    return winners
+
+end

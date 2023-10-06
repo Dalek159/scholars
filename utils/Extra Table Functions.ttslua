@@ -1,0 +1,65 @@
+--[[
+Module containing useful functions for interacting with tables in Lua.
+
+* sortAscending
+* sortDescending
+
+]]
+
+function sortAscending(t, sort_levels)
+    --[[
+        Sort the given table by the levels provided in an ascending order.
+
+        Parameters
+        ----------
+        t : table
+            The integer-indexed table that should be sorted in ascending order.
+        sort_levels : table
+            The array containing the various attributes of each sub-table that
+            should be used in determining the ascending order.
+
+        Returns
+        -------
+        nil
+            The sort operations happens in place.
+    ]]
+    table.sort(
+        t,
+        function(a, b)
+            for i = 1, #sort_levels do
+                if a[sort_levels[i]] > b[sort_levels[i]] then return false end
+                if a[sort_levels[i]] < b[sort_levels[i]] then return true end
+            end
+        end
+    )
+
+end
+
+function sortDescending(t, sort_levels)
+    --[[
+        Sort the given table by the levels provided in a descending order.
+
+        Parameters
+        ----------
+        t : table
+            The integer-indexed table that should be sorted in descending order.
+        sort_levels : table
+            The array containing the various attributes of each sub-table that
+            should be used in determining the descending order.
+
+        Returns
+        -------
+        nil
+            The sort operations happens in place.
+    ]]
+    table.sort(
+        t,
+        function(a, b)
+            for i = 1, #sort_levels do
+                if a[sort_levels[i]] < b[sort_levels[i]] then return false end
+                if a[sort_levels[i]] > b[sort_levels[i]] then return true end
+            end
+        end
+    )
+
+end

@@ -1,0 +1,293 @@
+--[[
+    Notice: I messed with the y-coordinate of button parameters
+    in generateButtonParameters() because the gold token is different
+    than a flat coin/tile. Also, I had to adjust the scale of the
+    button paramters (typically left to the createButton default values).
+]]
+
+-- Ludo Lodge Custom Counter Tokens by Ryan Langewisch
+-- Based on the excellent Universal Counter Tokens by MrStump
+
+-- Adjust the following values to customize the counter's appearance
+-- Every value named in ALL_CAPS is a value you can modify
+
+-- Minimum and maximum values for this counter
+MINIMUM_VALUE = 0     -- Use something like -9999 to allow negatives
+MAXIMUM_VALUE = 9999
+
+-- If true: allows you to type a number in the token's description, and then
+--          click the value button to set it directly to that number
+--
+-- Set to false to disable
+ALLOW_SET_FROM_DESCRIPTION = true
+
+-- Button colors
+-- RGB values are normally expressed as (r, g, b) where r, g, and b are
+-- between 0 and 255. TTS expects this on a scale of 0.0 to 1.0, so simply
+-- divide by 255.
+-- Alternatively, use the Color class, which contains these tables for any
+-- Player Color or added color.
+-- e.g. The soft black (64, 64, 64) would be expressed as {0.251, 0.251, 0.251}
+BUTTON_BACKGROUND_COLOR = Color.Black
+BUTTON_FONT_COLOR = Color.White
+
+-- Value button parameters (this is what shows the current count)
+VALUE_BUTTON_HEIGHT = 900
+VALUE_BUTTON_WIDTH = 900
+VALUE_BUTTON_HORIZONTAL_POSITION = 0  -- Negative for left, positive for right
+VALUE_BUTTON_VERTICAL_POSITION = 4.0    -- Negative for up, positive for down
+ONE_DIGIT_FONT_SIZE = 600
+TWO_DIGIT_FONT_SIZE = 500
+THREE_DIGIT_FONT_SIZE = 400
+FOUR_DIGIT_FONT_SIZE = 300
+
+-- Small add button parameters
+-- (button to add SMALL_ADD_VALUE to the count)
+SMALL_ADD_BUTTON_HEIGHT = 700
+SMALL_ADD_BUTTON_WIDTH = 700
+SMALL_ADD_BUTTON_HORIZONTAL_POSITION = 10.0  -- Negative for left, positive for right
+SMALL_ADD_BUTTON_VERTICAL_POSITION = 4.0    -- Negative for up, positive for down
+SMALL_ADD_BUTTON_FONT_SIZE = 400
+SMALL_ADD_BUTTON_LABEL = '+1'
+SMALL_ADD_VALUE = 1
+
+-- Small subtract button parameters
+-- (button to subtract SMALL_SUBTRACT_VALUE from the count)
+SMALL_SUBTRACT_BUTTON_HEIGHT = 700
+SMALL_SUBTRACT_BUTTON_WIDTH = 700
+SMALL_SUBTRACT_BUTTON_HORIZONTAL_POSITION = -10.0   -- Negative for left, positive for right
+SMALL_SUBTRACT_BUTTON_VERTICAL_POSITION = 4.0      -- Negative for up, positive for down
+SMALL_SUBTRACT_BUTTON_FONT_SIZE = 400
+SMALL_SUBTRACT_BUTTON_LABEL = '-1'
+SMALL_SUBTRACT_VALUE = 1 -- use absolute value
+
+-- Big add button parameters
+-- (button to add BIG_ADD_VALUE to the count)
+SHOW_BIG_ADD_BUTTON = false   -- Set to false for no button
+BIG_ADD_BUTTON_HEIGHT = 700
+BIG_ADD_BUTTON_WIDTH = 700
+BIG_ADD_BUTTON_HORIZONTAL_POSITION = 2.7   -- Negative for left, positive for right
+BIG_ADD_BUTTON_VERTICAL_POSITION = -1.0    -- Negative for up, positive for down
+BIG_ADD_BUTTON_FONT_SIZE = 400
+BIG_ADD_BUTTON_LABEL = '+3'
+BIG_ADD_VALUE = 3
+
+-- Big subtract button parameters
+-- (button to subtract BIG_SUBTRACT_VALUE from the count)
+SHOW_BIG_SUBTRACT_BUTTON = false   -- Set to false for no button
+BIG_SUBTRACT_BUTTON_HEIGHT = 700
+BIG_SUBTRACT_BUTTON_WIDTH = 700
+BIG_SUBTRACT_BUTTON_HORIZONTAL_POSITION = -2.7   -- Negative for left, positive for right
+BIG_SUBTRACT_BUTTON_VERTICAL_POSITION = -1.0     -- Negative for up, positive for down
+BIG_SUBTRACT_BUTTON_FONT_SIZE = 400
+BIG_SUBTRACT_BUTTON_LABEL = '-4'
+BIG_SUBTRACT_VALUE = 4 -- use absolute value
+
+--------------------------------------------
+-- CHANGE CODE BELOW AT YOUR OWN RISK. :) --
+--------------------------------------------
+
+-- Load save data and create buttons
+function onLoad(saved_data)
+    -- Load saved count value if save data is found
+    if saved_data != '' then
+        local loaded_data = JSON.decode(saved_data)
+        count = math.max(math.min(loaded_data.saved_count, MAXIMUM_VALUE), MINIMUM_VALUE)
+    else
+
+        count = MINIMUM_VALUE
+    end
+
+    generateButtonParameters()
+    createButtons()
+
+
+end
+
+-- Save count to save data
+function onSave()
+    local data_to_save = {saved_count = count}
+    saved_data = JSON.encode(data_to_save)
+    return saved_data
+end
+
+
+function small_add(obj, player_clicker_color)
+    -- Add the small value to the count and update the value button
+    if count + SMALL_ADD_VALUE <= MAXIMUM_VALUE then
+        count = count + SMALL_ADD_VALUE
+        updateValue()
+        printToAll(
+            player_clicker_color .. ' gained ' .. SMALL_ADD_VALUE .. ' gold',
+            player_clicker_color
+        )
+    else
+        printToAll(
+            player_clicker_color
+            .. ' attempted to gain gold past the maximum of ' ..
+            MAXIMUM_VALUE,
+            player_clicker_color
+        )
+    end
+end
+
+function small_subtract(obj, player_clicker_color)
+    -- Subtract the small value from the count and update the value button
+    if count - SMALL_SUBTRACT_VALUE >= MINIMUM_VALUE then
+        count = count - SMALL_SUBTRACT_VALUE
+        updateValue()
+        printToAll(
+            player_clicker_color .. ' spent ' .. SMALL_ADD_VALUE .. ' gold',
+            player_clicker_color
+        )
+    else
+        printToAll(
+            player_clicker_color
+            .. ' attempted to spend gold past the minimum of ' ..
+            MINIMUM_VALUE,
+            player_clicker_color
+        )
+    end
+end
+
+function big_add(obj, player_clicker_color)
+    -- Add the large value to the count and update the value button
+    if count + BIG_ADD_VALUE <= MAXIMUM_VALUE then
+        count = count + BIG_ADD_VALUE
+        updateValue()
+        printToAll(
+            player_clicker_color .. ' gained ' .. BIG_ADD_VALUE .. ' gold',
+            player_clicker_color
+        )
+    else
+        printToAll(
+            player_clicker_color
+            .. ' attempted to gain gold past the maximum of ' ..
+            MAXIMUM_VALUE,
+            player_clicker_color
+        )
+    end
+end
+
+function big_subtract(obj, player_clicker_color)
+    -- Subtract the large value from the count and update the value button
+    if count - BIG_SUBTRACT_VALUE >= MINIMUM_VALUE then
+        count = count - BIG_SUBTRACT_VALUE
+        updateValue()
+        printToAll(
+            player_clicker_color .. ' spent ' .. BIG_SUBTRACT_VALUE .. ' gold',
+            player_clicker_color
+        )
+    else
+        printToAll(
+            player_clicker_color
+            .. ' attempted to spend gold past the minimum of ' ..
+            MINIMUM_VALUE,
+            player_clicker_color
+        )
+    end
+end
+
+function setCountFromDescription(obj, player_clicker_color)
+    -- Check if the description is a number, and set the count to that number
+    if ALLOW_SET_FROM_DESCRIPTION then
+        local description = self.getDescription()
+        if description != '' and type(tonumber(description)) == 'number' then
+            self.setDescription('')
+            count = tonumber(description)
+            updateValue()
+
+            printToAll(
+                player_clicker_color
+                .. ' set their gold to ' .. description,
+                player_clicker_color
+            )
+        end
+    end
+end
+
+function updateValue()
+    -- Update the value button according to the current count
+    value_button_parameters.font_size = getValueButtonFontSize()
+
+    value_button_parameters.label = tostring(count)
+    self.editButton(value_button_parameters)
+end
+
+function getValueButtonFontSize()
+    -- Return a font size based on the number of digits in the current count
+    if count >= 0 and count <= 9 then
+        return ONE_DIGIT_FONT_SIZE
+    elseif count >= 10 and count <= 99 then
+        return TWO_DIGIT_FONT_SIZE
+    elseif count >= 100 and count <= 999 then
+        return THREE_DIGIT_FONT_SIZE
+    elseif count <= -1 and count >= -9 then
+        return TWO_DIGIT_FONT_SIZE
+    elseif count <= -10 and count >= -99 then
+        return THREE_DIGIT_FONT_SIZE
+    else
+        return FOUR_DIGIT_FONT_SIZE
+    end
+end
+
+function createButtons()
+    -- Create buttons based on the button parameters
+    value_button_parameters.label = tostring(count)
+    value_button_parameters.font_size = getValueButtonFontSize()
+
+    self.createButton(value_button_parameters)
+    self.createButton(plus_one_button_parameters)
+    self.createButton(minus_one_button_parameters)
+
+    if SHOW_BIG_ADD_BUTTON then
+        self.createButton(plus_five_button_parameters)
+    end
+
+    if SHOW_BIG_SUBTRACT_BUTTON then
+        self.createButton(minus_five_button_parameters)
+    end
+end
+
+function generateButtonParameters()
+    -- Load button parameters into tables for button creation
+    value_button_parameters = {
+        index = 0, click_function = 'setCountFromDescription', function_owner = self, label = '',
+        position = {VALUE_BUTTON_HORIZONTAL_POSITION, 6, VALUE_BUTTON_VERTICAL_POSITION},
+        width = VALUE_BUTTON_WIDTH, height = VALUE_BUTTON_HEIGHT,
+        color = BUTTON_BACKGROUND_COLOR, font_color = BUTTON_FONT_COLOR,
+        font_size = getValueButtonFontSize(),
+        scale = {3.5, 3.5, 3.5},
+    }
+    plus_one_button_parameters = {
+        click_function = 'small_add', function_owner = self, label = SMALL_ADD_BUTTON_LABEL,
+        position = {SMALL_ADD_BUTTON_HORIZONTAL_POSITION, -2, SMALL_ADD_BUTTON_VERTICAL_POSITION},
+        width = SMALL_ADD_BUTTON_WIDTH, height = SMALL_ADD_BUTTON_HEIGHT,
+        color = BUTTON_BACKGROUND_COLOR, font_color = BUTTON_FONT_COLOR,
+        font_size = SMALL_ADD_BUTTON_FONT_SIZE,
+        scale = {3.6, 3.6, 3.6},
+    }
+    minus_one_button_parameters = {
+        click_function = 'small_subtract', function_owner = self, label = SMALL_SUBTRACT_BUTTON_LABEL,
+        position = {SMALL_SUBTRACT_BUTTON_HORIZONTAL_POSITION, -2, SMALL_SUBTRACT_BUTTON_VERTICAL_POSITION},
+        width = SMALL_SUBTRACT_BUTTON_WIDTH, height = SMALL_SUBTRACT_BUTTON_HEIGHT,
+        color = BUTTON_BACKGROUND_COLOR, font_color = BUTTON_FONT_COLOR,
+        font_size = SMALL_SUBTRACT_BUTTON_FONT_SIZE,
+        scale = {3.6, 3.6, 3.6},
+    }
+    plus_five_button_parameters = {
+        click_function = 'big_add', function_owner = self, label = BIG_ADD_BUTTON_LABEL,
+        position = {BIG_ADD_BUTTON_HORIZONTAL_POSITION, 1.0, BIG_ADD_BUTTON_VERTICAL_POSITION},
+        width = BIG_ADD_BUTTON_WIDTH, height = BIG_ADD_BUTTON_HEIGHT,
+        color = BUTTON_BACKGROUND_COLOR, font_color = BUTTON_FONT_COLOR,
+        font_size = BIG_ADD_BUTTON_FONT_SIZE
+    }
+    minus_five_button_parameters = {
+        click_function = 'big_subtract', function_owner = self, label = BIG_SUBTRACT_BUTTON_LABEL,
+        position = {BIG_SUBTRACT_BUTTON_HORIZONTAL_POSITION, 1.0, BIG_SUBTRACT_BUTTON_VERTICAL_POSITION},
+        width = BIG_SUBTRACT_BUTTON_WIDTH, height = BIG_SUBTRACT_BUTTON_HEIGHT,
+        color = BUTTON_BACKGROUND_COLOR, font_color = BUTTON_FONT_COLOR,
+        font_size = BIG_SUBTRACT_BUTTON_FONT_SIZE
+    }
+
+end

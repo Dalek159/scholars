@@ -1,0 +1,24 @@
+function scoreCaliphCards()
+    --[[
+    Determine the points a Player scores from their Caliph Rewards.
+
+    ]]
+    for choice, choice_tbl in pairs(CaliphCardZones) do
+        for _, obj in pairs(choice_tbl.zone.getObjects()) do
+            if obj.hasTag('Influence') then
+                local player_color = obj.getGMNotes()
+                local total = 0
+                if player_color ~= opponent.name then
+                    total = PlayerScores[player_color].caliph_cards.total
+                    PlayerScores[
+                        player_color
+                    ].caliph_cards.total = total + choice_tbl.points
+                else
+                    total = OpponentScore.caliph_cards.total
+                    OpponentScore.caliph_cards.total = total + choice_tbl.points
+                end
+            end
+        end
+    end
+
+end

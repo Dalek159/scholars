@@ -1,0 +1,58 @@
+function nameTranslators()
+    --[[
+    Name the Starting and Employable Translators.
+
+    This should only be done to set the values, and
+    then that state saved to serve as the game state.
+
+    If you need to update the card names, then add this
+    back to the end of onLoad.
+
+    ]]
+    -- Name the Starting Translators
+    for _, obj_tbl in ipairs(StartingTranslatorBag.getObjects()) do
+        starting_translator = StartingTranslatorBag.takeObject({
+            position = StartingTranslatorBag.getPosition() + Vector(0, -3, 0),
+            guid = obj_tbl.guid,
+        })
+        starting_translator.setName(StartingTranslators[obj_tbl.guid].name)
+        StartingTranslatorBag.putObject(starting_translator)
+    end
+
+    -- Name the Employable Translators
+    for language, deck in pairs(TranslatorStacks) do
+        local deck_size = #deck.getObjects()
+        -- iterates from the bottom to the top of the deck
+        for _, obj_tbl in ipairs(deck.getObjects()) do
+            if _ < deck_size - 1 then
+                employable_translator = deck.takeObject({
+                    position = deck.getPosition() + Vector(0, 0.5 * _, 0),
+                    guid = obj_tbl.guid,
+                })
+
+                employable_translator.setName(
+                    EmployableTranslators[obj_tbl.guid].name
+                )
+            -- If you don't preserved the deck by handling the last 2
+            -- cards differently, the GUID will change
+            else
+                Wait.time(
+                    function()
+                        employable_translator = deck.takeObject({
+                            position = deck.getPosition() + Vector(0, 0.5 * _, 0),
+                            guid = obj_tbl.guid,
+                        })
+
+                        employable_translator.setName(
+                            EmployableTranslators[obj_tbl.guid].name
+                        )
+                    end,
+                    2
+                )
+
+            end
+
+        end
+    end
+
+end

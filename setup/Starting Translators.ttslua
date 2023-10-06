@@ -1,0 +1,56 @@
+--[[
+The 10 Starting Translators that Players draft from during setup.
+
+]]
+StartingTranslators = {
+    ['095f9e'] = {
+        room = Vector(-15.92, 1.17, -5.66), -- Room 1
+        name = 'Starting Translator 1',
+        points = 2,
+    },
+    ['78c2fd'] = {
+        room = Vector(-12.02, 1.17, -5.68), -- Room 2
+        name = 'Starting Translator 2',
+        points = 2,
+    },
+    ['1bd1a1'] = {
+        room = Vector(-8.19, 1.17, -5.64), -- Room 3
+        name = 'Starting Translator 3',
+        points = 2,
+    },
+    ['29480a'] = {
+        room = Vector(-4.29, 1.17, -5.63), -- Room 4
+        name = 'Starting Translator 4',
+        points = 2,
+    },
+    ['f70cec'] = {
+        room = Vector(-0.44, 1.17, -5.65), -- Room 5
+        name = 'Starting Translator 5',
+        points = 3,
+    },
+    ['d73265'] = {
+        room = Vector(3.45, 1.17, -5.66), -- Room 6
+        name = 'Starting Translator 6',
+        points = 2,
+    },
+    ['a7799c'] = {
+        room = Vector(7.30, 1.17, -5.63), -- Room 7
+        name = 'Starting Translator 7',
+        points = 2,
+    },
+    ['020018'] = {
+        room = Vector(11.19, 1.17, -5.64), -- Room 8
+        name = 'Starting Translator 8',
+        points = 3,
+    },
+    ['9026d8'] = {
+        room = Vector(15.07, 1.17, -5.66), -- Room 9
+        name = 'Starting Translator 9',
+        points = 1,
+    },
+    ['048233'] = {
+        room = Vector(18.93, 1.17, -5.65), -- Room 10
+        name = 'Starting Translator 10',
+        points = 1,
+    },
+}

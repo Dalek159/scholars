@@ -1,0 +1,56 @@
+function scoreScrollCards()
+    --[[
+    Determine the points a Player scores from any Translated Scroll Cards.
+
+    ]]
+    for player_color, categories_tbl in pairs(PlayerEndState) do
+        local list_of_scrolls = categories_tbl.scroll_cards
+        local total = 0
+        for _, scroll_card in ipairs(list_of_scrolls) do
+            local scroll_tbl = ScrollCards[scroll_card.getGUID()]
+            local bonus_params = {player_color = player_color}
+            for k, v in pairs(scroll_tbl.bonus_params) do
+                bonus_params[k] = v
+            end
+
+            local scroll_pts = scroll_tbl.base_points
+            scroll_pts = scroll_pts + scroll_tbl.bonus_points(bonus_params)
+
+
+            PlayerScores[player_color].scroll_cards.itemized[
+                scroll_card.getName()
+            ] = scroll_pts
+
+            total = total + scroll_pts
+        end
+
+        PlayerScores[player_color].scroll_cards.total = total
+    end
+
+    if soloMode then
+        OpponentScore.scroll_cards.itemized['Chinese'] = OpponentEndState[
+            'Translated Scrolls']['Chinese'] * 7
+        OpponentScore.scroll_cards.itemized['Sanskrit'] = OpponentEndState[
+            'Translated Scrolls']['Sanskrit'
+        ] * math.floor(#OpponentEndState.retired_translators/2)
+        OpponentScore.scroll_cards.itemized['Greek'] = OpponentEndState[
+            'Translated Scrolls']['Greek'
+        ] * OpponentEndState['Translated Scrolls'].total
+        OpponentScore.scroll_cards.itemized['Hebrew'] = OpponentEndState[
+            'Translated Scrolls']['Hebrew'
+        ] * OpponentEndState.research_markers
+        OpponentScore.scroll_cards.itemized['Persian'] = OpponentEndState[
+            'Translated Scrolls']['Persian'
+        ] * OpponentEndState.employed_translators
+        OpponentScore.scroll_cards.itemized['Syriac'] = OpponentEndState[
+            'Translated Scrolls']['Syriac'
+        ] * math.floor(OpponentEndState['Guild Membership']/2)
+
+        for _, language in ipairs(languages) do
+            local total = OpponentScore.scroll_cards.total
+            local lang_total = OpponentScore.scroll_cards.itemized[language]
+            OpponentScore.scroll_cards.total = total + lang_total
+        end
+    end
+
+end

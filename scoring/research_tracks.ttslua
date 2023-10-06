@@ -1,0 +1,29 @@
+function scoreResearchTracks()
+    --[[
+    Determine the points Players score from their levels on each Research Track.
+
+    ]]
+    local points_by_level = {
+        ['Level 0'] = 0,
+        ['Level 1'] = 1,
+        ['Level 2'] = 1,
+        ['Level 3'] = 2,
+        ['Level 4'] = 2,
+        ['Level 5'] = 3,
+        ['Level 6'] = 4,
+        ['Level 7'] = 5,
+    }
+
+    for player_color, categories_tbl in pairs(PlayerEndState) do
+        local research_tbl = categories_tbl.research_tracks
+        local sum = 0
+        for track, level in pairs(research_tbl) do
+            sum = sum + points_by_level[level]
+            PlayerScores[player_color].research_tracks.itemized[
+                track
+            ] = points_by_level[level]
+        end
+        PlayerScores[player_color].research_tracks.total = sum
+    end
+
+end

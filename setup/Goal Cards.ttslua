@@ -1,0 +1,42 @@
+--[[
+Module that defines the Goal Cards available for play.
+
+]]
+GoalCards = {
+    ['6b24dd'] = { -- Syriac
+        ['scroll'] = getObjectFromGUID('5d735d'),
+        ['goal'] = getObjectFromGUID('6b24dd'),
+        ['colored_worker'] = YellowWorkerBag,
+        ['secondary_die'] = GreenDiceBag,
+    },
+    ['ea8f00'] = { -- Persian
+        ['scroll'] = getObjectFromGUID('60327a'),
+        ['goal'] = getObjectFromGUID('ea8f00'),
+        ['colored_worker'] = RedWorkerBag,
+        ['secondary_die'] = OrangeDiceBag,
+    },
+    ['fe816c'] = { -- Greek
+        ['scroll'] = getObjectFromGUID('5bb784'),
+        ['goal'] = getObjectFromGUID('fe816c'),
+        ['colored_worker'] = BlueWorkerBag,
+        ['secondary_die'] = GreenDiceBag,
+    },
+    ['27316c'] = { -- Hebrew
+        ['scroll'] = getObjectFromGUID('348378'),
+        ['goal'] = getObjectFromGUID('27316c'),
+        ['colored_worker'] = BlueWorkerBag,
+        ['secondary_die'] = PurpleDiceBag,
+    },
+    ['fa4f81'] = { -- Chinese
+        ['scroll'] = getObjectFromGUID('644ada'),
+        ['goal'] = getObjectFromGUID('fa4f81'),
+        ['colored_worker'] = RedWorkerBag,
+        ['secondary_die'] = PurpleDiceBag,
+    },
+    ['60fc77'] = { -- Sanskrit
+        ['scroll'] = getObjectFromGUID('1c5d5d'),
+        ['goal'] = getObjectFromGUID('60fc77'),
+        ['colored_worker'] = YellowWorkerBag,
+        ['secondary_die'] = OrangeDiceBag,
+    },
+}

@@ -1,0 +1,48 @@
+--[[
+Various zones that are in the base state of the mod that are used for scoring.
+
+]]
+HouseOfWisdom = {
+    purple = {
+        ['control_zone'] = getObjectFromGUID('746b91'),
+        ['points'] = 1,
+    },
+    orange = {
+        ['control_zone'] = getObjectFromGUID('7a13ce'),
+        ['points'] = 2,
+    },
+    green = {
+        ['control_zone'] = getObjectFromGUID('731f07'),
+        ['points'] = 3,
+    }
+}
+
+CaliphCardZones = {
+    top_choice = {
+        zone = getObjectFromGUID('639c52'),
+        points = 3,
+    },
+    middle_choice = {
+        zone = getObjectFromGUID('107196'),
+        points = 1,
+    },
+}
+
+DiceSumZones = {
+    {
+        zone = getObjectFromGUID('1eedf9'),
+        points = 0,
+    },
+    {
+        zone = getObjectFromGUID('2bf008'),
+        points = 2,
+    },
+    {
+        zone = getObjectFromGUID('33bb12'),
+        points = 4,
+    },
+    {
+        zone = getObjectFromGUID('cb7923'),
+        points = 6,
+    },
+}

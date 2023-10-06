@@ -1,0 +1,303 @@
+--[[
+The various non-Starting Translators that Players can hire during the game.
+
+In the code, these will be referred to as Employable Translators.
+]]
+EmployableTranslators = {
+    -- Chinese Translators
+    ['8fac0e'] = {
+        name = 'Chinese A',
+        points = 2,
+    },
+    ['ee2aac'] = {
+        name = 'Chinese B',
+        points = 2,
+    },
+    ['d7df28'] = {
+        name = 'Chinese C',
+        points = 3,
+    },
+    ['896183'] = {
+        name = 'Chinese D',
+        points = 1,
+    },
+    ['ac2454'] = {
+        name = 'Chinese E',
+        points = 3,
+    },
+    ['b85389'] = {
+        name = 'Chinese F',
+        points = 2,
+    },
+    ['8d7e26'] = {
+        name = 'Chinese G',
+        points = 1,
+    },
+    ['9b4166'] = {
+        name = 'Chinese H',
+        points = 2,
+    },
+    ['7ca833'] = {
+        name = 'Chinese I',
+        points = 2,
+    },
+    -- Sanskrit Translators
+    ['ba6f83'] = {
+        name = 'Sanskrit A',
+        points = 3,
+    },
+    ['cc322b'] = {
+        name = 'Sanskrit B',
+        points = 1,
+    },
+    ['804c74'] = {
+        name = 'Sanskrit C',
+        points = 2,
+    },
+    ['28366c'] = {
+        name = 'Sanskrit D',
+        points = 2,
+    },
+    ['c69064'] = {
+        name = 'Sanskrit E',
+        points = 3,
+    },
+    ['9dfcea'] = {
+        name = 'Sanskrit F',
+        points = 1,
+    },
+    ['a6a3e7'] = {
+        name = 'Sanskrit G',
+        points = 3,
+    },
+    ['e45e53'] = {
+        name = 'Sanskrit H',
+        points = 1,
+    },
+    ['1d4f88'] = {
+        name = 'Sanskrit I',
+        points = 1,
+    },
+    -- Greek Translators
+    ['88b3d1'] = {
+        name = 'Greek A',
+        points = 2,
+    },
+    ['75d662'] = {
+        name = 'Greek B',
+        points = 1,
+    },
+    ['6b4313'] = {
+        name = 'Greek C',
+        points = 2,
+    },
+    ['de35d0'] = {
+        name = 'Greek D',
+        points = 3,
+    },
+    ['3d5cd9'] = {
+        name = 'Greek E',
+        points = 2,
+    },
+    ['656c60'] = {
+        name = 'Greek F',
+        points = 1,
+    },
+    ['cefcaa'] = {
+        name = 'Greek G',
+        points = 2,
+    },
+    ['a3f403'] = {
+        name = 'Greek H',
+        points = 2,
+    },
+    ['b4546b'] = {
+        name = 'Greek I',
+        points = 2,
+    },
+    -- Hebrew Translators
+    ['5a9064'] = {
+        name = 'Hebrew A',
+        points = 2,
+    },
+    ['8c5822'] = {
+        name = 'Hebrew B',
+        points = 2,
+    },
+    ['4eb0f5'] = {
+        name = 'Hebrew C',
+        points = 2,
+    },
+    ['33541a'] = {
+        name = 'Hebrew D',
+        points = 2,
+    },
+    ['03229e'] = {
+        name = 'Hebrew E',
+        points = 3,
+    },
+    ['4b1aff'] = {
+        name = 'Hebrew F',
+        points = 1,
+    },
+    ['0b61fa'] = {
+        name = 'Hebrew G',
+        points = 3,
+    },
+    ['cdc631'] = {
+        name = 'Hebrew H',
+        points = 1,
+    },
+    ['74bc1a'] = {
+        name = 'Hebrew I',
+        points = 2,
+    },
+    -- Persian Translators
+    ['503972'] = {
+        name = 'Persian A',
+        points = 2,
+    },
+    ['430f0c'] = {
+        name = 'Persian B',
+        points = 3,
+    },
+    ['14ddc2'] = {
+        name = 'Persian C',
+        points = 3,
+    },
+    ['f96b2f'] = {
+        name = 'Persian D',
+        points = 2,
+    },
+    ['90cede'] = {
+        name = 'Persian E',
+        points = 3,
+    },
+    ['137835'] = {
+        name = 'Persian F',
+        points = 2,
+    },
+    ['5fa55d'] = {
+        name = 'Persian G',
+        points = 2,
+    },
+    ['5f9e70'] = {
+        name = 'Persian H',
+        points = 3,
+    },
+    ['114add'] = {
+        name = 'Persian I',
+        points = 2,
+    },
+    -- Syriac Translators
+    ['b214eb'] = {
+        name = 'Syriac A',
+        points = 3,
+    },
+    ['578cd7'] = {
+        name = 'Syriac B',
+        points = 3,
+    },
+    ['20444c'] = {
+        name = 'Syriac C',
+        points = 2,
+    },
+    ['81a7cc'] = {
+        name = 'Syriac D',
+        points = 3,
+    },
+    ['f38986'] = {
+        name = 'Syriac E',
+        points = 3,
+    },
+    ['2cd8b7'] = {
+        name = 'Syriac F',
+        points = 2,
+    },
+    ['ac01a0'] = {
+        name = 'Syriac G',
+        points = 2,
+    },
+    ['875a98'] = {
+        name = 'Syriac H',
+        points = 1,
+    },
+    ['0f7f02'] = {
+        name = 'Syriac I',
+        points = 2,
+    },
+    -- Wild1 Translators
+    ['553958'] = {
+        name = 'Wild1 A',
+        points = 3,
+    },
+    ['accf89'] = {
+        name = 'Wild1 B',
+        points = 3,
+    },
+    ['cabc1a'] = {
+        name = 'Wild1 C',
+        points = 2,
+    },
+    ['97c677'] = {
+        name = 'Wild1 D',
+        points = 1,
+    },
+    ['984246'] = {
+        name = 'Wild1 E',
+        points = 1,
+    },
+    ['59d796'] = {
+        name = 'Wild1 F',
+        points = 2,
+    },
+    ['1ba62d'] = {
+        name = 'Wild1 G',
+        points = 2,
+    },
+    ['7794c4'] = {
+        name = 'Wild1 H',
+        points = 1,
+    },
+    ['434678'] = {
+        name = 'Wild1 I',
+        points = 3,
+    },
+    -- Wild2 Translators
+    ['779b34'] = {
+        name = 'Wild2 A',
+        points = 1,
+    },
+    ['0879bb'] = {
+        name = 'Wild2 B',
+        points = 3,
+    },
+    ['a18a82'] = {
+        name = 'Wild2 C',
+        points = 1,
+    },
+    ['2f8ffa'] = {
+        name = 'Wild2 D',
+        points = 3,
+    },
+    ['0d717f'] = {
+        name = 'Wild2 E',
+        points = 1,
+    },
+    ['9212e7'] = {
+        name = 'Wild2 F',
+        points = 3,
+    },
+    ['cf17ad'] = {
+        name = 'Wild2 G',
+        points = 3,
+    },
+    ['574122'] = {
+        name = 'Wild2 H',
+        points = 1,
+    },
+    ['e8116e'] = {
+        name = 'Wild2 I',
+        points = 2,
+    },
+}

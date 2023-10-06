@@ -1,0 +1,122 @@
+--[[
+Module dedicated to displaying information related to the scoring of the game.
+
+]]
+function broadcastWinners(winners)
+    --[[
+    Broadcast the Players' scores and declare the winner(s).
+
+    Parameters
+    ----------
+    winners : table
+        An array containing the Player color(s) of the winner(s).
+
+    ]]
+    for player_color, tbl in pairs(PlayerScores) do
+        broadcastToAll(
+            player_color .. ': ' .. tbl.total .. ' points',
+            Color[player_color]
+        )
+    end
+    if soloMode then
+        broadcastToAll(
+            opponent.name .. ': ' .. OpponentScore.total .. ' points',
+            opponent.color
+        )
+    end
+
+    local msg = ''
+    if #winners == 1 then
+        msg = msg .. winners[1] .. ' is the winner with '
+        if winners[1] ~= opponent.name then
+            msg = msg .. PlayerScores[winners[1]].total .. ' points!'
+        else
+            msg = msg .. OpponentScore.total .. ' points!'
+        end
+    elseif #winners == 2 then
+        msg = msg .. winners[1] .. ' and ' .. winners[2]
+            .. ' share the victory with '
+            .. PlayerScores[winners[1]].total .. ' points!'
+    else
+        for i = 1, #winners - 1 do
+            msg = msg .. winners[i] .. ', '
+        end
+        msg = msg .. ' and ' .. winners[#winners]
+            .. ' share the victory with '
+            .. PlayerScores[winners[1]].total .. ' points!'
+    end
+
+    broadcastToAll(msg, log_message_color)
+
+end
+
+function printScoreDetails()
+    --[[
+    Display an overview of each Player's score.
+
+    Display the overall score for each Player, as well
+    as a detailed breakdown of their points from each
+    scoring category.
+
+    ]]
+    printToAll(
+        '***************       Final Scores         ***************',
+        log_message_color
+    )
+    for _, player_color in ipairs(getSeatedPlayers()) do
+        printToAll(
+            '********** ' .. player_color .. ' ('
+            .. PlayerScores[player_color].total .. ') **********',
+            Color[player_color]
+        )
+        for category, cat_tbl in pairs(PlayerScores[player_color]) do
+            if category ~= 'total' then
+                printToAll(
+                    category .. ': ' .. cat_tbl.total,
+                    Color.White
+                )
+                for name, points in pairs(cat_tbl.itemized) do
+                    printToAll(
+                        '            ' .. name .. ': ' .. points,
+                        Color.White
+                    )
+                end
+            end
+        end
+
+        printToAll(
+            '**************************',
+            Color[player_color]
+        )
+
+    end
+
+    if soloMode then
+        printToAll(
+            '********** ' .. opponent.name .. ' ('
+            .. OpponentScore.total .. ') **********',
+            opponent.color
+        )
+        for category, cat_tbl in pairs(OpponentScore) do
+            if category ~= 'total' then
+                printToAll(
+                    category .. ': ' .. cat_tbl.total,
+                    Color.White
+                )
+                for name, points in pairs(cat_tbl.itemized) do
+                    printToAll(
+                        '            ' .. name .. ': ' .. points,
+                        Color.White
+                    )
+                end
+            end
+        end
+
+        printToAll(
+            '**************************',
+            opponent.color
+        )
+
+    end
+
+end

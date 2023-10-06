@@ -1,0 +1,26 @@
+--[[
+Allows for the creation of additional resource counters.
+
+]]
+function SpawnSilverCounter()
+    --[[
+    Spawn a Silver Counter.
+
+    ]]
+    local clone = MasterSilverCounter.clone({
+        position = ButtonToken.getPosition() + Vector(-6.75, 3.5, -5)
+    })
+    clone.setLock(false)
+
+end
+
+function SpawnGoldCounter()
+    --[[
+    Spawn a Gold Counter.
+
+    ]]
+    local clone = MasterGoldCounter.clone({
+        position = ButtonToken.getPosition() + Vector(0, 3.5, -5)
+    })
+    clone.setLock(false)
+end

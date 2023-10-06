@@ -1,0 +1,367 @@
+--[[
+Module concerned with setting up a Solo game.
+
+]]
+
+function SoloCheck()
+    --[[
+        Ensure that only a single Player is seated at a playable hand.
+
+    ]]
+    local count = 0
+    for i, player_color in ipairs(getSeatedPlayers()) do
+        for j, playable_color in ipairs(PlayerTable) do
+            if player_color == playable_color then
+                count = count + 1
+                break
+            end
+        end
+    end
+
+    if count ~= 1 then
+        broadcastToAll(
+            'Please only have one Player seated at a playable color.\n'
+            .. 'If someone wants to watch, please have them switch to Grey',
+            log_message_color
+        )
+    else
+        Solo()
+    end
+
+end
+
+function Solo()
+    --[[
+    Start the process for setting up the game for a Solo experience.
+
+    ]]
+    ButtonToken.clearButtons()
+    PlayerCount = 1
+    soloMode = true
+
+    opponent.board = SoloBoardBag.takeObject({
+        position = {7.51, 1.00, -21.00},
+        rotation = {0.00, 180.00, 0.00}
+    })
+    opponent.board.interactable = false
+    opponent.difficulty_board = SoloBoardBag.takeObject({
+        position = {-12.53, 1.00, -21.00},
+        rotation = {0.00, 180.00, 0.00}
+    })
+    opponent.difficulty_board.interactable = false
+
+    Wait.time(Solo2, 2.0)
+end
+
+function studentSetup()
+    --[[
+    Set up the Student Opponent.
+
+    * Dice Sum starts at -2
+
+    ]]
+    if not draftFinished then
+        broadcastToAll(
+            'You must draft your starting Resource Card and Translator '
+            .. 'before selecting which Opponent to face.',
+            log_message_color
+        )
+    else
+        printToAll('Setting up the Student Opponent...', log_message_color)
+        diceSumTracker.translate(-2 * diceSumOffset)
+        opponent.difficulty_board.destruct()
+    end
+
+end
+
+function assignOpponentStartingScroll(lang)
+    --[[
+    Assign the Opponent their starting Scroll Card.
+
+    Parameters
+    ----------
+    lang : string
+        The language of the Scroll Card; e.g. 'Persian'.
+
+    Raises
+    ------
+    If the Reserve (of Scrolls) does not contain any Scroll
+    Cards of the indicated language, an error is raised to
+    the Player for them to manually find such a Scroll Card
+    from the play area.
+
+    ]]
+    local starting_scroll = nil
+    for _, obj_tbl in ipairs(ScrollDeck.getObjects()) do
+        scroll_card_metatable = ScrollCards[obj_tbl.guid]
+        if scroll_card_metatable.language == lang then
+            starting_scroll = obj_tbl.guid
+            break
+        end
+    end
+
+    local offsets = {
+        Persian = Vector(3.57, 0.01, 6.65),
+        Greek = Vector(-1.23, 0.01, 6.65),
+        Chinese = Vector(-6, 0.01, 6.65),
+    }
+
+    if starting_scroll ~= nil then
+        ScrollDeck.takeObject({
+            position  = opponent.board.getPosition() + offsets[lang],
+            guid      = starting_scroll,
+        })
+    else
+        broadcastToAll(
+            'There are no ' .. lang .. ' Scroll Cards in the Reserve.\n'
+            .. 'Please find one either on the Main Board or in '
+            .. 'the Scroll Draw Pile, give it to the Opponent, and '
+            .. 'replace it with one from the Reserve.',
+            log_message_color
+        )
+    end
+end
+
+function scribeSetup()
+    --[[
+    Set up the Scribe Opponent.
+
+    * Dice Sum starts at 0.
+    * Starting Scroll Card: Persian
+
+    ]]
+    if not draftFinished then
+        broadcastToAll(
+            'You must draft your starting Resource Card and Translator '
+            .. 'before selecting which Opponent to face.',
+            log_message_color
+        )
+    else
+        printToAll('Setting up the Scribe Opponent...', log_message_color)
+        diceSumTracker.translate(0 * diceSumOffset)
+        assignOpponentStartingScroll('Persian')
+        opponent.difficulty_board.destruct()
+    end
+
+end
+
+function teacherSetup()
+    --[[
+    Set up the Teacher Opponent.
+
+    * Dice Sum starts at 1.
+    * Starting Scroll Card: Greek
+    * 1 Gold on the left-most Employed Neutral Translator
+    * Influence the Scroll Card in the Purple Guild
+
+    ]]
+    if not draftFinished then
+        broadcastToAll(
+            'You must draft your starting Resource Card and Translator '
+            .. 'before selecting which Opponent to face.',
+            log_message_color
+        )
+    else
+        printToAll('Setting up the Teacher Opponent...', log_message_color)
+        diceSumTracker.translate(1 * diceSumOffset)
+        assignOpponentStartingScroll('Greek')
+        assignGoldToTranslators(1)
+        opponent.influence_bag.takeObject({
+            position = StartingScrollLocations.purple_guild + Vector(0, 0.5, 0),
+        })
+
+        opponent.difficulty_board.destruct()
+    end
+
+end
+
+function assignGoldToTranslators(num)
+    --[[
+    Assign Gold to the "X" left-most Employed Neutral Translators.
+
+    Parameters
+    ----------
+    num : int
+        The number of Employed Neutral Translators that should start
+        with a Gold.
+
+    ]]
+
+    -- Build a local table of the Employed Neutral Translators that
+    -- can be sorted from left to right;
+    -- i.e. with respect to their position along the x-axis
+    local translator_tbl = {}
+    for _, translator in ipairs(draftPool.employed_translators) do
+        table.insert(
+            translator_tbl,
+            {
+                card = translator,
+                x_pos = translator.getPosition().x
+            }
+        )
+    end
+
+    sortAscending(translator_tbl, {'x_pos'})
+    for i=1, num do
+        GoldBag.takeObject({
+            position = translator_tbl[i].card.getPosition() + Vector(0, 0.5, 0),
+        })
+    end
+
+end
+
+function scholarSetup()
+    --[[
+    Set up the Scholar Opponent.
+
+    * Dice Sum starts at 3.
+    * Starting Scroll Card: Chinese
+    * 1 Gold on the 2 left-most Employed Neutral Translator
+    * Influence the Scroll Card in the Purple Guild
+    * Influence the Scroll Card in the bottom middle of the Map
+    * Influence the Orange Guild
+
+    ]]
+    if not draftFinished then
+        broadcastToAll(
+            'You must draft your starting Resource Card and Translator '
+            .. 'before selecting which Opponent to face.',
+            log_message_color
+        )
+    else
+        printToAll('Setting up the Scholar Opponent...', log_message_color)
+        diceSumTracker.translate(3 * diceSumOffset)
+        assignOpponentStartingScroll('Chinese')
+        assignGoldToTranslators(2)
+        opponent.influence_bag.takeObject({
+            position = StartingScrollLocations.purple_guild + Vector(0, 0.5, 0),
+        })
+        opponent.influence_bag.takeObject({
+            position = StartingScrollLocations.bot_mid_map + Vector(0, 0.5, 0),
+        })
+        -- Small offset since the Influence Marker's position is from their top
+        -- while the zone's position is from its middle.
+        local orange_zone = HouseOfWisdom.orange.control_zone
+        opponent.influence_bag.takeObject({
+            position = orange_zone.getPosition() + Vector(0, 0, 0.25),
+        })
+
+        opponent.difficulty_board.destruct()
+    end
+
+end
+
+function Solo2()
+    --[[
+    Finish the setup for a Solo experience.
+
+    Create the buttons on the back of the Solo Board for selecting the
+    Opponent's difficulty. Put out the various Solo components (e.g.
+    Scheme Deck, Reference Cards).
+
+    ]]
+    local y_offset = 0.1
+    local z_offset = -0.9 -- neg z is up; pos z is down
+    local width = 380
+    local height = 40
+    local font_size = 48
+    local button_color = Color.Black
+    local font_color = Color.White
+    opponent.difficulty_board.createButton({
+        click_function = 'studentSetup',
+        function_owner = self,
+        label          = 'Level 1: Student',
+        position       = Vector(-1.18, y_offset, z_offset),
+        width          = width,
+        height         = height,
+        font_size      = font_size,
+        color          = button_color,
+        font_color     = font_color,
+    })
+
+    opponent.difficulty_board.createButton({
+        click_function = 'scribeSetup',
+        function_owner = self,
+        label          = 'Level 2: Scribe',
+        position       = Vector(-0.4, y_offset, z_offset),
+        width          = width,
+        height         = height,
+        font_size      = font_size,
+        color          = button_color,
+        font_color     = font_color,
+    })
+
+    opponent.difficulty_board.createButton({
+        click_function = 'teacherSetup',
+        function_owner = self,
+        label          = 'Level 3: Teacher',
+        position       = Vector(0.38, y_offset, z_offset),
+        width          = width,
+        height         = height,
+        font_size      = font_size,
+        color          = button_color,
+        font_color     = font_color,
+    })
+
+    opponent.difficulty_board.createButton({
+        click_function = 'scholarSetup',
+        function_owner = self,
+        label          = 'Level 4: Scholar',
+        position       = Vector(1.16, y_offset, z_offset),
+        width          = width,
+        height         = height,
+        font_size      = font_size,
+        color          = button_color,
+        font_color     = font_color,
+    })
+
+    local SoloComponentsLocations = {
+        Vector(-5.96, 0.50, 2.39), -- Player Marker
+        Vector(-8.0, 0.16, 4.5), -- Research Marker
+        Vector(-8.0, 0.16, 3.5), -- Research Marker
+        Vector(-8.0, 0.16, 2.5), -- Research Marker
+        Vector(-8.0, 0.16, 1.5), -- Research Marker
+        Vector(-8.0, 0.16, 0.5), -- Research Marker
+        Vector(-8.0, 0.16, -0.5), -- Research Marker
+        Vector(-5.96, 0.50, -2.65), -- Scheme Card Draw Pile
+        Vector(8.88, 0.0, 2.4), -- Top Reference Card
+        Vector(8.88, 0.0, -2.4), -- Bottom Reference Card
+    }
+
+    for i=1, #SoloComponentsLocations do
+        SoloComponentBag.takeObject({
+            position = opponent.board.getPosition() + SoloComponentsLocations[i],
+            rotation = {0.00, 180.00, 180.00}
+        })
+    end
+
+    -- Remove the components for non-seated players
+    -- Relies on the GM notes (only visible to the Black player)
+    for _, obj in ipairs(getAllObjects()) do
+        for _, player_color in ipairs(PlayerTable) do
+            if Player[player_color].seated == false then
+                if obj.getGMNotes() == player_color then
+                    obj.destruct()
+                    break -- move to the next object
+                end
+            end
+        end
+    end
+
+    opponent.influence_bag.setPosition(
+        opponent.board.getPosition() + Vector(-10.38, 0.0, 2.78)
+    )
+    -- Amount of space wrt the x-axis we need to move the Influence Marker
+    -- for tracking the Opponent's Dice Sum
+    diceSumOffset = Vector(0.48, 0, 0)
+    -- Put one out, but the difficulty will move it
+    diceSumTracker = opponent.influence_bag.takeObject({
+        position = opponent.board.getPosition() + Vector(0.00, 0.29, 0.1),
+        rotation = {0.00, 180.00, 0.00}
+    })
+    diceSumTracker.setName('Dice Sum Tracker')
+
+
+    CasualOrEpicDialogue()
+
+end
