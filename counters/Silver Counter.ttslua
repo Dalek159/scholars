@@ -1,5 +1,3 @@
-log_message_color = Global.getVar('log_message_color')
-
 -- Ludo Lodge Custom Counter Tokens by Ryan Langewisch
 -- Based on the excellent Universal Counter Tokens by MrStump
 
@@ -114,14 +112,14 @@ function small_add(obj, player_clicker_color)
         updateValue()
         printToAll(
             player_clicker_color .. ' gained ' .. SMALL_ADD_VALUE .. ' silver',
-            log_message_color
+            player_clicker_color
         )
     else
         printToAll(
             player_clicker_color
             .. ' attempted to gain silver past the maximum of ' ..
             MAXIMUM_VALUE,
-            log_message_color
+            player_clicker_color
         )
     end
 end
@@ -133,14 +131,14 @@ function small_subtract(obj, player_clicker_color)
         updateValue()
         printToAll(
             player_clicker_color .. ' spent ' .. SMALL_ADD_VALUE .. ' silver',
-            log_message_color
+            player_clicker_color
         )
     else
         printToAll(
             player_clicker_color
             .. ' attempted to spend silver past the minimum of ' ..
             MINIMUM_VALUE,
-            log_message_color
+            player_clicker_color
         )
     end
 end
@@ -152,14 +150,14 @@ function big_add(obj, player_clicker_color)
         updateValue()
         printToAll(
             player_clicker_color .. ' gained ' .. BIG_ADD_VALUE .. ' silver',
-            log_message_color
+            player_clicker_color
         )
     else
         printToAll(
             player_clicker_color
             .. ' attempted to gain silver past the maximum of ' ..
             MAXIMUM_VALUE,
-            log_message_color
+            player_clicker_color
         )
     end
 end
@@ -171,14 +169,14 @@ function big_subtract(obj, player_clicker_color)
         updateValue()
         printToAll(
             player_clicker_color .. ' spent ' .. BIG_SUBTRACT_VALUE .. ' silver',
-            log_message_color
+            player_clicker_color
         )
     else
         printToAll(
             player_clicker_color
             .. ' attempted to spend silver past the minimum of ' ..
             MINIMUM_VALUE,
-            log_message_color
+            player_clicker_color
         )
     end
 end
@@ -195,7 +193,7 @@ function setCountFromDescription(obj, player_clicker_color)
             printToAll(
                 player_clicker_color
                 .. ' set their silver to ' .. description,
-                log_message_color
+                player_clicker_color
             )
         end
     end
