@@ -360,7 +360,9 @@ function Solo2()
         rotation = {0.00, 180.00, 0.00}
     })
     diceSumTracker.setName('Dice Sum Tracker')
-
+    -- Add the Player Marker here since it is hidden 
+    -- until this function takes it out of the bag.
+    opponent.player_marker = getObjectFromGUID('5732e0')
 
     CasualOrEpicDialogue()
 

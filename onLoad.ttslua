@@ -44,6 +44,7 @@ function onLoad()
             ['dice_bag'] = getObjectFromGUID('ead9eb'),
             ['lock_zone'] = getObjectFromGUID('654f36'),
             ['influence_bag'] = getObjectFromGUID('62bf1a'),
+            ['player_marker'] = getObjectFromGUID('fd149a'),
             ['research_markers'] = {
                 ['Mathematics'] = getObjectFromGUID('225708'),
                 ['Physics'] = getObjectFromGUID('d2315f'),
@@ -59,6 +60,7 @@ function onLoad()
             ['dice_bag'] = getObjectFromGUID('5b181f'),
             ['lock_zone'] = getObjectFromGUID('f8bb36'),
             ['influence_bag'] = getObjectFromGUID('8a54d2'),
+            ['player_marker'] = getObjectFromGUID('8dbb27'),
             ['research_markers'] = {
                 ['Mathematics'] = getObjectFromGUID('4f63df'),
                 ['Physics'] = getObjectFromGUID('4aa02b'),
@@ -74,6 +76,7 @@ function onLoad()
             ['dice_bag'] = getObjectFromGUID('f20d04'),
             ['lock_zone'] = getObjectFromGUID('bee7d9'),
             ['influence_bag'] = getObjectFromGUID('aee2c5'),
+            ['player_marker'] = getObjectFromGUID('e40565'),
             ['research_markers'] = {
                 ['Mathematics'] = getObjectFromGUID('20faf2'),
                 ['Physics'] = getObjectFromGUID('bc5620'),
@@ -89,6 +92,7 @@ function onLoad()
             ['dice_bag'] = getObjectFromGUID('3537f1'),
             ['lock_zone'] = getObjectFromGUID('0d7c09'),
             ['influence_bag'] = getObjectFromGUID('d46626'),
+            ['player_marker'] = getObjectFromGUID('c37358'),
             ['research_markers'] = {
                 ['Mathematics'] = getObjectFromGUID('309237'),
                 ['Physics'] = getObjectFromGUID('657673'),

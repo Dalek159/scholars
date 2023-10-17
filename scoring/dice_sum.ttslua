@@ -65,21 +65,15 @@ function scoreDiceSum()
 
     dice_sum_tbl = orderTable(dice_sum_tbl)
 
-    -- Place Player's Influence Markers in the Dice Sum scoring area
+    -- Place Player's Player Markers in the Dice Sum scoring area
     for zone_idx, tbl in ipairs(dice_sum_tbl) do
-        -- Zones measure position from their center
-        -- Influence Markers measure position from their top mid
-        local influence_bag = nil
+        local player_marker = nil
         if tbl.player ~= 'Opponent' then
-            influence_bag = PlayerComponents[tbl.player].influence_bag
+            player_marker = PlayerComponents[tbl.player].player_marker
         else
-            influence_bag = opponent.influence_bag
+            player_marker = opponent.player_marker
         end
-        influence_bag.takeObject({
-            position = DiceSumZones[zone_idx].zone.getPosition() + Vector(
-                0, 0, 0.25
-            ),
-        })
+        player_marker.setPosition(DiceSumZones[zone_idx].zone.getPosition())
     end
 
     -- Divvy out points
