@@ -153,30 +153,10 @@ function Setup()
         tooltip = 'This will take the card from the bottom of the deck.'
     })
 
-    ButtonToken.createButton({
-        click_function = 'SpawnSilverCounter',
-        function_owner = self,
-        label          = 'Spawn a \nSilver Counter',
-        position       = Vector(8, 2.5, -1.5),
-        rotation       = Vector(0, 180, 0),
-        width          = 2200,
-        height         = 1300,
-        font_size      = 320,
-        color          = Color.Black,
-        font_color     = Color.White,
-    })
-
-    ButtonToken.createButton({
-        click_function = 'SpawnGoldCounter',
-        function_owner = self,
-        label          = 'Spawn a \nGold Counter',
-        position       = Vector(0, 2.5, -1.5),
-        rotation       = Vector(0, 180, 0),
-        width          = 2200,
-        height         = 1300,
-        font_size      = 320,
-        color          = Color.Black,
-        font_color     = Color.White,
+    CounterToken = spawnObject({
+        type              = 'Checker_black',
+        position          = Vector(2.21, -0.8, 28.0),
+        callback_function = function(obj) obj.setLock(true) end,
     })
 
     ScoringToken = getObjectFromGUID('4b66ad')
@@ -340,6 +320,9 @@ function ClearSetupComponents()
         * Starting Translator Bag
         * Starting Scrolls for undealt Goal Cards
 
+    After the components are deleted, create the buttons for spawning
+    the Gold and Silver counters.
+
     ]]
     GoalCardBag.destruct()
     for _, shuffle_bag in ipairs(ShuffleBags) do
@@ -354,5 +337,31 @@ function ClearSetupComponents()
             obj.destruct()
         end
     end
+
+    CounterToken.createButton({
+        click_function = 'SpawnSilverCounter',
+        function_owner = self,
+        label          = 'Spawn a \nSilver Counter',
+        position       = Vector(8, 2.0, 0), -- positive x is to the left
+        rotation       = Vector(0, 180, 0),
+        width          = 2200,
+        height         = 1300,
+        font_size      = 320,
+        color          = Color.Black,
+        font_color     = Color.White,
+    })
+
+    CounterToken.createButton({
+        click_function = 'SpawnGoldCounter',
+        function_owner = self,
+        label          = 'Spawn a \nGold Counter',
+        position       = Vector(-4, 2.0, 0), -- negative x is to the right
+        rotation       = Vector(0, 180, 0),
+        width          = 2200,
+        height         = 1300,
+        font_size      = 320,
+        color          = Color.Black,
+        font_color     = Color.White,
+    })
 
 end
