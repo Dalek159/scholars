@@ -76,23 +76,6 @@ function scoreGame()
             end
         end
 
-        -- If the Players are rescoring, move any Influence
-        -- Markers from the Dice Sum scoring area
-        for _, zone_tbl in ipairs(DiceSumZones) do
-            for _, obj in ipairs(zone_tbl.zone.getObjects()) do
-                if obj.hasTag('Influence') then
-                    local player_color = obj.getGMNotes()
-                    if player_color ~= opponent.name then
-                        PlayerComponents[
-                            player_color
-                        ].influence_bag.putObject(obj)
-                    else
-                        opponent.influence_bag.putObject(obj)
-                    end
-                end
-            end
-        end
-
     end
 
     scoring_categories = {

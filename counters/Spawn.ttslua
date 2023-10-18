@@ -8,7 +8,7 @@ function SpawnSilverCounter()
 
     ]]
     local clone = MasterSilverCounter.clone({
-        position = ButtonToken.getPosition() + Vector(-6.75, 3.5, -5)
+        position = CounterToken.getPosition() + Vector(-2, 3.5, 0)
     })
     clone.setLock(false)
 
@@ -20,7 +20,7 @@ function SpawnGoldCounter()
 
     ]]
     local clone = MasterGoldCounter.clone({
-        position = ButtonToken.getPosition() + Vector(0, 3.5, -5)
+        position = CounterToken.getPosition() + Vector(10, 3.5, 0.75)
     })
     clone.setLock(false)
 end

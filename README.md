@@ -1,3 +1,20 @@
+- [Introduction](#introduction)
+- [Setup Atom to Utilize `require`](#setup-atom-to-utilize-require)
+  - [Basic](#basic)
+  - [Specific](#specific)
+- [Directory Structure](#directory-structure)
+  - [Top Level](#top-level)
+  - [Subfolders](#subfolders)
+    - [assets](#assets)
+    - [counters](#counters)
+    - [images](#images)
+    - [scoring](#scoring)
+    - [scrolls](#scrolls)
+    - [setup](#setup)
+    - [translators](#translators)
+    - [utils](#utils)
+
+
 # Introduction
 
 The [Official Scholars mod by Garphill Games](https://steamcommunity.com/sharedfiles/filedetails/?id=2643607043) automated most, but not all, of the game setup, and had no scoring solution.  The [Scholars of the South Tigris (Improved US) mod](https://steamcommunity.com/sharedfiles/filedetails/?id=2946356787) was designed to improve the overall Player experience by not only addressing those limitations, but by adding several other quality of life improvements:
@@ -75,6 +92,13 @@ Note: If you find a way for `require` to work with a variable path (e.g. `requir
 In order to avoid simply having a (somewhat unhelpful) single `require` statement in Global.-1.ttslua, it was decided to keep an unconnected copy of Global.-1.ttslua in the project. This allows people a natural looking point in order to find information on the mod (e.g. creator, git repo). It does have to be manually updated, but the benefits of availability outweighed the drawbacks of adding this manual process.
 
 ## Subfolders
+
+### assets
+
+Contains the obj file that serves as the model for the worker bags. This is different than the model for the workers themselves only in that its natural resting position is laying down.
+
+URL to Model on the Steam Cloud:  
+http://cloud-3.steamusercontent.com/ugc/2103802298702425963/D00C82150C7D5453A4DE87F5874A1843F72DE0DE/
 
 ### counters
 
