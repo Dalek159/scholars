@@ -61,7 +61,7 @@ function onScriptingButtonDown(key_num, player_color)
                 obj_name .. ' is not supported for quick returns.'
             )
         -- Supported Objects
-    else
+        else
             obj.setPosition(supported_things[obj_name].getPosition() + offset)
             announcement(player_color, obj_name)
         end

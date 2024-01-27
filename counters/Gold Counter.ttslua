@@ -1,8 +1,6 @@
 --[[
-    Notice: I messed with the y-coordinate of button parameters
-    in generateButtonParameters() because the gold token is different
-    than a flat coin/tile. Also, I had to adjust the scale of the
-    button paramters (typically left to the createButton default values).
+    Notice: I adjusted the scale of the button paramters (typically left 
+    to the createButton default values) in generateButtonParameters().
 ]]
 
 -- Ludo Lodge Custom Counter Tokens by Ryan Langewisch
@@ -19,7 +17,7 @@ MAXIMUM_VALUE = 9999
 --          click the value button to set it directly to that number
 --
 -- Set to false to disable
-ALLOW_SET_FROM_DESCRIPTION = true
+ALLOW_SET_FROM_DESCRIPTION = false
 
 -- Button colors
 -- RGB values are normally expressed as (r, g, b) where r, g, and b are
@@ -28,37 +26,42 @@ ALLOW_SET_FROM_DESCRIPTION = true
 -- Alternatively, use the Color class, which contains these tables for any
 -- Player Color or added color.
 -- e.g. The soft black (64, 64, 64) would be expressed as {0.251, 0.251, 0.251}
+COUNT_FONT_COLOR = Color.Black
 BUTTON_BACKGROUND_COLOR = Color.Black
 BUTTON_FONT_COLOR = Color.White
 
 -- Value button parameters (this is what shows the current count)
-VALUE_BUTTON_HEIGHT = 900
-VALUE_BUTTON_WIDTH = 900
+VALUE_BUTTON_HEIGHT = 0
+VALUE_BUTTON_WIDTH = 0
 VALUE_BUTTON_HORIZONTAL_POSITION = 0  -- Negative for left, positive for right
-VALUE_BUTTON_VERTICAL_POSITION = 4.0    -- Negative for up, positive for down
-ONE_DIGIT_FONT_SIZE = 600
-TWO_DIGIT_FONT_SIZE = 500
-THREE_DIGIT_FONT_SIZE = 400
-FOUR_DIGIT_FONT_SIZE = 300
+VALUE_BUTTON_VERTICAL_POSITION = 0.0    -- Negative for up, positive for down
+ONE_DIGIT_FONT_SIZE = 900
+TWO_DIGIT_FONT_SIZE = 800
+THREE_DIGIT_FONT_SIZE = 700
+FOUR_DIGIT_FONT_SIZE = 600
 
 -- Small add button parameters
 -- (button to add SMALL_ADD_VALUE to the count)
 SMALL_ADD_BUTTON_HEIGHT = 700
 SMALL_ADD_BUTTON_WIDTH = 700
-SMALL_ADD_BUTTON_HORIZONTAL_POSITION = 10.0  -- Negative for left, positive for right
-SMALL_ADD_BUTTON_VERTICAL_POSITION = 4.0    -- Negative for up, positive for down
-SMALL_ADD_BUTTON_FONT_SIZE = 400
-SMALL_ADD_BUTTON_LABEL = '+1'
+-- Negative for right, positive for left
+SMALL_ADD_BUTTON_HORIZONTAL_POSITION = -11.0
+-- Negative for down, positive for up
+SMALL_ADD_BUTTON_VERTICAL_POSITION = 0.0
+SMALL_ADD_BUTTON_FONT_SIZE = 700
+SMALL_ADD_BUTTON_LABEL = '+'
 SMALL_ADD_VALUE = 1
 
 -- Small subtract button parameters
 -- (button to subtract SMALL_SUBTRACT_VALUE from the count)
 SMALL_SUBTRACT_BUTTON_HEIGHT = 700
 SMALL_SUBTRACT_BUTTON_WIDTH = 700
-SMALL_SUBTRACT_BUTTON_HORIZONTAL_POSITION = -10.0   -- Negative for left, positive for right
-SMALL_SUBTRACT_BUTTON_VERTICAL_POSITION = 4.0      -- Negative for up, positive for down
-SMALL_SUBTRACT_BUTTON_FONT_SIZE = 400
-SMALL_SUBTRACT_BUTTON_LABEL = '-1'
+-- Negative for right, positive for left
+SMALL_SUBTRACT_BUTTON_HORIZONTAL_POSITION = 11.0
+-- Negative for down, positive for up
+SMALL_SUBTRACT_BUTTON_VERTICAL_POSITION = 0.0
+SMALL_SUBTRACT_BUTTON_FONT_SIZE = 700
+SMALL_SUBTRACT_BUTTON_LABEL = '-'
 SMALL_SUBTRACT_VALUE = 1 -- use absolute value
 
 -- Big add button parameters
@@ -253,15 +256,17 @@ function generateButtonParameters()
     -- Load button parameters into tables for button creation
     value_button_parameters = {
         index = 0, click_function = 'setCountFromDescription', function_owner = self, label = '',
-        position = {VALUE_BUTTON_HORIZONTAL_POSITION, 6, VALUE_BUTTON_VERTICAL_POSITION},
+        position = {VALUE_BUTTON_HORIZONTAL_POSITION, 0, VALUE_BUTTON_VERTICAL_POSITION},
+        rotation = {0, 180, 0},
         width = VALUE_BUTTON_WIDTH, height = VALUE_BUTTON_HEIGHT,
-        color = BUTTON_BACKGROUND_COLOR, font_color = BUTTON_FONT_COLOR,
+        font_color = COUNT_FONT_COLOR,
         font_size = getValueButtonFontSize(),
-        scale = {3.5, 3.5, 3.5},
+        scale = {4.0, 1.0, 4.0},
     }
     plus_one_button_parameters = {
         click_function = 'small_add', function_owner = self, label = SMALL_ADD_BUTTON_LABEL,
         position = {SMALL_ADD_BUTTON_HORIZONTAL_POSITION, -2, SMALL_ADD_BUTTON_VERTICAL_POSITION},
+        rotation = {0, 180, 0},
         width = SMALL_ADD_BUTTON_WIDTH, height = SMALL_ADD_BUTTON_HEIGHT,
         color = BUTTON_BACKGROUND_COLOR, font_color = BUTTON_FONT_COLOR,
         font_size = SMALL_ADD_BUTTON_FONT_SIZE,
@@ -270,6 +275,7 @@ function generateButtonParameters()
     minus_one_button_parameters = {
         click_function = 'small_subtract', function_owner = self, label = SMALL_SUBTRACT_BUTTON_LABEL,
         position = {SMALL_SUBTRACT_BUTTON_HORIZONTAL_POSITION, -2, SMALL_SUBTRACT_BUTTON_VERTICAL_POSITION},
+        rotation = {0, 180, 0},
         width = SMALL_SUBTRACT_BUTTON_WIDTH, height = SMALL_SUBTRACT_BUTTON_HEIGHT,
         color = BUTTON_BACKGROUND_COLOR, font_color = BUTTON_FONT_COLOR,
         font_size = SMALL_SUBTRACT_BUTTON_FONT_SIZE,
