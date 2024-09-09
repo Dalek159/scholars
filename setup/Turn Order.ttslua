@@ -45,15 +45,15 @@ function determinePlayerOrder()
     -- Determine where the players are sitting, and assign first player
     Turns.enable = true
     math.randomseed(os.time())
-    local seated_players = getSeatedPlayers()
-    local first_player_id = math.random(1, #seated_players)
-    broadcastToAll(seated_players[first_player_id] .. ' will be first player', Color[seated_players[first_player_id]])
+    local Players = getSeatedPlayers()
+    local first_player = math.random(1, #Players)
+    broadcastToAll(Players[first_player] .. ' will be first player', Color[Players[first_player]])
 
     local order = reorderColors()
     -- Assume play proceeds clockwise around the existing hands from
     -- the assigned first player
     for i=1,#order do
-        if order[i] == seated_players[first_player_id] then
+        if order[i] == Players[first_player] then
             Wrap(order, #order - i + 1)
         end
     end
