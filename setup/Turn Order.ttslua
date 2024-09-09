@@ -1,3 +1,34 @@
+function reorderColors()
+    local seated_players = getSeatedPlayers()
+    local new_order = {}
+    
+    for i=1,4 do
+        if seated_players[i] == "Red" then
+            new_order[#new_order+1] = seated_players[i]
+        end
+    end
+
+    for i=1,4 do
+        if seated_players[i] == "Teal" then
+            new_order[#new_order+1] = seated_players[i]
+        end
+    end
+
+    for i=1,4 do
+        if seated_players[i] == "Yellow" then
+            new_order[#new_order+1] = seated_players[i]
+        end
+    end
+
+    for i=1,4 do
+        if seated_players[i] == "Purple" then
+            new_order[#new_order+1] = seated_players[i]
+        end
+    end
+    return new_order
+end
+
+
 function determinePlayerOrder()
     --[[
     Determine the first player.
@@ -11,19 +42,19 @@ function determinePlayerOrder()
         Integer-indexed table of the string form of Player Colors.
 
     ]]
-    local Players = getSeatedPlayers()
     -- Determine where the players are sitting, and assign first player
     Turns.enable = true
     math.randomseed(os.time())
-    local first_player = math.random(1, #Players)
-    local order = {}
+    local seated_players = getSeatedPlayers()
+    local first_player_id = math.random(1, #seated_players)
+    broadcastToAll(seated_players[first_player_id] .. ' will be first player', Color[seated_players[first_player_id]])
+
+    local order = reorderColors()
     -- Assume play proceeds clockwise around the existing hands from
     -- the assigned first player
-    for i=1,#Players do
-        if first_player + i - 1 <= #Players then
-            order[i] = Players[first_player + i - 1]
-        else
-            order[i] = Players[first_player + i - 1 - #Players]
+    for i=1,#order do
+        if order[i] == seated_players[first_player_id] then
+            Wrap(order, #order - i + 1)
         end
     end
 

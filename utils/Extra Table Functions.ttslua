@@ -63,3 +63,11 @@ function sortDescending(t, sort_levels)
     )
 
 end
+
+function Wrap(t, l)
+    for i = 1, l do
+        table.insert( t, 1, t[#t] )
+        table.remove( t, #t )
+    end
+    return t
+end
