@@ -42,10 +42,10 @@ function determinePlayerOrder()
         Integer-indexed table of the string form of Player Colors.
 
     ]]
+    local Players = getSeatedPlayers()
     -- Determine where the players are sitting, and assign first player
     Turns.enable = true
     math.randomseed(os.time())
-    local Players = getSeatedPlayers()
     local first_player = math.random(1, #Players)
     broadcastToAll(Players[first_player] .. ' will be first player', Color[Players[first_player]])
 
