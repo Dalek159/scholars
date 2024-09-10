@@ -78,7 +78,7 @@ function table.shift(t, idx)
         The index where the shift should start.
 
     ]]
-    for i=1, #t - (idx + 1) do
+    for i=1, (#t - idx) + 1 do
         table.insert(t, 1, t[#t])
         table.remove(t, #t)
     end
