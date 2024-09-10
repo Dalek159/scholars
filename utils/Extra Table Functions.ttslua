@@ -63,3 +63,23 @@ function sortDescending(t, sort_levels)
     )
 
 end
+
+function table.shift(t, idx)
+    --[[
+    Given an array, shift the values from [idx, #t] to the front of t.
+
+    The shift will happen in place.
+
+    Parameters
+    ----------
+    t : table
+        Array containing the values to be shifted.
+    idx : int
+        The index where the shift should start.
+
+    ]]
+    for i=1, #t - (idx + 1) do
+        table.insert(t, 1, t[#t])
+        table.remove(t, #t)
+    end
+end
