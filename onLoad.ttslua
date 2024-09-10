@@ -9,10 +9,10 @@ function onLoad()
     -- MasterGoldCounter.setPosition(Vector(7, -1, 0))
 
     PlayerTable = {
-        "Teal",
         "Red",
+        "Teal",
+        "Yellow",
         "Purple",
-        "Yellow"
     }
 
     languages = {
