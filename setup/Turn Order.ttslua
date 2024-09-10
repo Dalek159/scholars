@@ -11,21 +11,19 @@ function determinePlayerOrder()
         Integer-indexed table of the string form of Player Colors.
 
     ]]
-    local Players = getSeatedPlayers()
     -- Determine where the players are sitting, and assign first player
-    Turns.enable = true
-    math.randomseed(os.time())
-    local first_player = math.random(1, #Players)
     local order = {}
-    -- Assume play proceeds clockwise around the existing hands from
-    -- the assigned first player
-    for i=1,#Players do
-        if first_player + i - 1 <= #Players then
-            order[i] = Players[first_player + i - 1]
-        else
-            order[i] = Players[first_player + i - 1 - #Players]
+    for _, color in ipairs(PlayerTable) do
+        if Player[color].seated then
+            table.insert(order, color)
         end
     end
+    Turns.enable = true
+    math.randomseed(os.time())
+    local first_player = math.random(1, #order)
+    -- Assume play proceeds clockwise around the existing hands from
+    -- the assigned first player
+    table.shift(order, first_player)
 
     printToAll('Turn order for the game will be:', log_message_color)
     for idx, player_color in ipairs(order) do
